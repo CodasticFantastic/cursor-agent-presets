@@ -136,6 +136,44 @@ Place help mechanisms (contact, chat, FAQ, phone) in the same relative order acr
 </html>
 ```
 
+On a multi-page app, put the same skip + matching `id` on **every** route in the set (or in a shared layout). A skip on home alone does not satisfy 2.4.1 elsewhere. Prefer the layout so individual pages cannot omit the target.
+
+## Layout tables vs data tables (1.3.1)
+
+```html
+<!-- Layout only — hide table semantics -->
+<table role="presentation">
+  <tr>
+    <td>Hours</td>
+    <td>09:00–17:00</td>
+  </tr>
+</table>
+
+<!-- Real data — keep table semantics + headers -->
+<table>
+  <caption>Order summary</caption>
+  <thead>
+    <tr><th scope="col">Item</th><th scope="col">Qty</th></tr>
+  </thead>
+  <tbody>...</tbody>
+</table>
+```
+
+Do not use a bare `<table>` for CSS grid/columns without `role="presentation"`. Do not mark a real data table as presentation.
+
+## ARIA name references (4.1.2)
+
+```html
+<!-- Broken: id does not exist → empty/wrong accessible name -->
+<section aria-labelledby="missing-promo-label">...</section>
+
+<!-- OK: referenced id exists -->
+<h2 id="promo-label">Spring sale</h2>
+<section aria-labelledby="promo-label">...</section>
+```
+
+Never leave focusable controls (`a`, `button`, inputs, `tabIndex={0}`) inside `aria-hidden="true"`. Hide from AT only when the subtree is also removed from the tab order.
+
 ## Form Labels & Autocomplete (1.3.5, 3.3.2)
 
 ```html

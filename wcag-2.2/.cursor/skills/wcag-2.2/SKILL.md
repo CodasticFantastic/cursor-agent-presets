@@ -22,9 +22,10 @@ The markdown tables are the working source. Official recommendations: https://ww
 3. **Respect the version** — For WCAG 2.2, prioritize the 6 new A/AA criteria (`references/new-criteria.md`). For WCAG 2.1, skip every row in “Added in 2.2” in `references/wcag-2.1-vs-2.2.md`. For a migration, report only that delta.
 4. **Implement with patterns** — Use the concrete code patterns in `references/code-patterns.md`. Patterns for 2.4.11, 2.5.7, 2.5.8, 3.2.6, 3.3.7, and 3.3.8 apply only when the target is WCAG 2.2.
 5. **Checklists** — WCAG 2.2: `references/wcag-2.2-success-criteria-table.md`. WCAG 2.1: `references/wcag-2.1-success-criteria-table.md`. Differences: `references/wcag-2.1-vs-2.2.md`.
-6. **Test guidance** — Recommend keyboard-only testing, screen reader spot-checks, contrast tools, and axe-core / Lighthouse where applicable.
-7. **Cite criteria** — When reporting issues or justifying code, reference the exact Success Criterion number and level (e.g., “2.5.8 Target Size (Minimum) AA”).
-8. **Do not claim conformance** — Classify every finding as code, hybrid, or manual. A `pass` needs evidence. Use the report format below. Never state that a page, component, or project meets WCAG.
+6. **App / multi-route reviews** — If scope is more than a single component or tiny diff, also load `references/audit-coverage.md` and run its **route/layer sweep** + **minimum coverage gate** before finishing. Do not stop after the first broken widget. A pass on one route does not close the criterion for the app — file failures on routes outside the evidence scope.
+7. **Test guidance** — Recommend keyboard-only testing, screen reader spot-checks, contrast tools, and axe-core / Lighthouse where applicable.
+8. **Cite criteria** — When reporting issues or justifying code, reference the exact Success Criterion number and level (e.g., “2.5.8 Target Size (Minimum) AA”).
+9. **Do not claim conformance** — Classify every finding as code, hybrid, or manual. A `pass` needs evidence. Use the report format below. Never state that a page, component, or project meets WCAG.
 
 ## Key Rules (both versions)
 
@@ -56,6 +57,7 @@ The markdown tables are the working source. Official recommendations: https://ww
 - Version delta for a choice or a migration → `references/wcag-2.1-vs-2.2.md`
 - New 2.2 criteria normative text → `references/new-criteria.md`
 - Ready-to-use HTML/CSS/JS patterns → `references/code-patterns.md`
+- App/multi-route audits (mandatory) → `references/audit-coverage.md`
 - Fallback PDFs (only for a gap in the tables) → `assets/WCAG_2.1.pdf`, `assets/WCAG_2.2.pdf`
 
 ## Common Failures to Avoid
@@ -67,11 +69,17 @@ WCAG 2.2 only:
 - Drag-only interactions with no click/tap alternative (2.5.7)
 - Login forms that block password managers or paste (3.3.8)
 - Multi-step forms that force re-entry of previously entered data (3.3.7)
+- Help in a different relative place on one flow page than on the rest of the set (3.2.6)
 
 Both versions:
 
 - Focus indicators with insufficient contrast or size
-- Missing skip links or landmarks for keyboard users
+- Missing skip links or landmarks for keyboard users — including skip on some routes only, or `href="#main"` with no matching `id` on that page (2.4.1)
+- `aria-labelledby` / `aria-describedby` pointing at a missing id (4.1.2)
+- Focusable elements inside `aria-hidden="true"` (4.1.2 / 2.4.3)
+- Layout `<table>` without `role="presentation"` (or without proper headers if it is a data table) (1.3.1)
+- Positive `tabIndex` values that break DOM order (2.4.3)
+- Treating a decorative `alt=""` pattern as proof that empty alt on informative product/chart images is OK (1.1.1)
 
 Always explain the accessibility rationale when generating or fixing code.
 
@@ -83,11 +91,12 @@ Evidence rules:
 
 - Status `pass` only with evidence: a repository location `path:line`, or a tool result that names the tool and the output file. With no such evidence the status is `needs verification`.
 - One passing component does not close the criterion for the page. Record the scope of the evidence (this file or this component). A page-level note still needs every relevant part of that page that is in scope.
+- On app / multi-route scope: a pass on N routes does not close the criterion for the app. File failures (or “not applicable”) for in-scope routes that lack the same pattern.
 - Do not infer browser or assistive-technology behavior from a component name or from a UI library’s documentation. Evidence is source in the repository or a tool result from a rendered page.
 
 Put each criterion you discuss into one class:
 
-- **Code** — the source alone shows a failure or a satisfied check. Examples: `html` without `lang` (3.1.1); an `img` with no `alt` attribute (1.1.1); a form control with no label, `aria-label`, or `aria-labelledby` (1.3.1, 3.3.2, 4.1.2); a button or link with no accessible name (2.4.4, 4.1.2); `outline: none` or `outline: 0` with no replacement `:focus-visible` style (2.4.7); a click handler on a non-interactive element with no keyboard operation (2.1.1); a drag-only control in the same component with no single-pointer alternative (2.5.7).
+- **Code** — the source alone shows a failure or a satisfied check. Examples: `html` without `lang` (3.1.1); an `img` with no `alt` attribute (1.1.1); a form control with no label, `aria-label`, or `aria-labelledby` (1.3.1, 3.3.2, 4.1.2); a button or link with no accessible name (2.4.4, 4.1.2); `outline: none` or `outline: 0` with no replacement `:focus-visible` style (2.4.7); a click handler on a non-interactive element with no keyboard operation (2.1.1); a drag-only control in the same component with no single-pointer alternative (2.5.7); `aria-labelledby` / `aria-describedby` targeting a missing id (4.1.2); focusable content inside `aria-hidden="true"` (4.1.2); layout `<table>` without `role="presentation"` (1.3.1); skip link missing on a route that is in the same set as pages that have one, or skip target id missing (2.4.1).
 - **Hybrid** — the source shows a risk, and pass or fail needs the rendered page, computed style, or more than this snippet. Examples: contrast (1.4.3, 1.4.11); target size and the inline or spacing exception (2.5.8); focus hidden under sticky UI (2.4.11); whether an existing focus style is visible (2.4.7); heading order across the page (1.3.1); link purpose in context (2.4.4); help in the same place on every page (3.2.6); redundant entry across steps that are not all in view (3.3.7). Whether `alt=""` is correct is hybrid when the image purpose is unclear.
 - **Manual** — the source cannot settle it. Examples: screen reader announcement and reading order; a full keyboard walk, including traps that appear only at runtime (2.1.2); whether dragging is essential (2.5.7 exception); accuracy of captions or transcripts (1.2.x); an authentication alternative that is outside this component (3.3.8); flashing content (2.3.1); reflow and 200% zoom (1.4.4, 1.4.10).
 
@@ -102,6 +111,10 @@ Standard: <from wcag.config.json, unless the user overrode it>
 Level: <from wcag.config.json, unless the user overrode it>
 Verdict: this is not a conformance claim.
 
+### Coverage (app / multi-route audits)
+- Routes / layers swept: <layout | pages | chrome | forms | widgets | media | css>
+- Gate: pass | incomplete — <missing hunt or “folder absent”>
+
 ### Failures visible in code
 - Location: path:line
 - Criterion and level:
@@ -114,7 +127,7 @@ Verdict: this is not a conformance claim.
 - Criterion and level:
 - Status: pass
 - Evidence: path:line  |  <tool name> + <result file>
-- Scope: this file or this component. This pass does not close the criterion for the page.
+- Scope: this file or this component. This pass does not close the criterion for the page or app.
 
 ### Needs verification
 - Criterion and level:
@@ -123,4 +136,5 @@ Verdict: this is not a conformance claim.
 - What is missing: no path:line and no tool result, or the rendered page was not tested
 ```
 
-If a section has no items, write “None in this scope.” Do not invent a pass. A check without `path:line` or a tool result goes under “Needs verification”.
+If a section has no items, write “None in this scope.” Do not invent a pass. A check without `path:line` or a tool result goes under “Needs verification”.  
+For single-component diffs, `### Coverage` may say `n/a — component-scoped`. For app / multi-route scope, incomplete gate means keep searching — do not close with only the largest widget failure.

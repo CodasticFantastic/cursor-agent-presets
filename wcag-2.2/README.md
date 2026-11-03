@@ -15,7 +15,7 @@ The same preset can show what changes between 2.1 and 2.2.
 | **Skill** | `.cursor/skills/wcag-2.2/` | On-demand full workflow, normative criteria, code patterns and the complete success criteria table. |
 | **Subagent** | `.cursor/agents/a11y-reviewer.md` | Specialized, independent accessibility auditor (readonly). |
 | **Hook** | `.cursor/hooks.json` + `hooks/a11y-reminder.sh` | After every UI file edit: detects the file and runs `eslint-plugin-jsx-a11y` when available. Logs results. |
-| **References** | `.cursor/skills/wcag-2.2/references/` | Criteria tables for 2.1 and 2.2, the version delta, new 2.2 criteria, and code patterns. Loaded on demand. |
+| **References** | `.cursor/skills/wcag-2.2/references/` | Criteria tables for 2.1 and 2.2, the version delta, new 2.2 criteria, code patterns, and app audit-coverage. Loaded on demand. |
 | **Assets** | `.cursor/skills/wcag-2.2/assets/` | Official WCAG 2.1 and 2.2 PDFs. Fallback when a table is not enough. Cursor loads skill assets from this folder. |
 
 ### Key reference files
@@ -25,6 +25,7 @@ The same preset can show what changes between 2.1 and 2.2.
 - `references/wcag-2.1-vs-2.2.md` — what 2.2 adds, what it removes, and how to report a migration
 - `references/new-criteria.md` — normative text of the 9 new WCAG 2.2 success criteria
 - `references/code-patterns.md` — ready-to-use HTML/CSS/JS patterns for the highest-impact criteria
+- `references/audit-coverage.md` — app / multi-route sweep + coverage gate (mandatory on full-app audits)
 - `assets/WCAG_2.1.pdf`, `assets/WCAG_2.2.pdf` — official recommendation PDFs
 - `wcag.config.json` — default standard and level
 
