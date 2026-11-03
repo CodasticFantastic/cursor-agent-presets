@@ -67,12 +67,14 @@ At `pragmatic`, still **list** each magnet; severity may be Medium for tiny stab
 ### L — Liskov Substitution
 
 - Overrides that `throw` / return `NaN` / no-op where the base promises work.
+- **Conditional identity:** subtype sometimes returns the input / early-exits with no effect while the base promises real work (policy, validate, save, notify, transform).
 - Setters that break base invariants (classic Square/Rectangle).
-- Subtypes that invert postconditions (e.g. “Discount” that raises price).
+- Subtypes that invert postconditions (promised direction worsened; `NaN`).
 - “Read-only” or “cached” subtypes that lie about wipe/save.
 - Fake polymorphism (subtype name claims PayPal, body calls Stripe).
 - Template-method subclasses that **skip** a required step (e.g. no receipt) while callers assume the full template ran.
 - Collections / value types that lie about invariants (unsorted “SortedList”, “immutable” Money that mutates / mixes currency; cache miss → `{}`).
+- **Sibling sweep:** after you classify one adjuster/policy type as OK (honest name, no `extends`), list every other concrete that extends the same abstract base in that module — for each check throw | NaN | raise | identity/no-op | skipped template step. One clean sibling does not clear the hierarchy.
 - **Call-graph:** pages, layouts, reports routes, **worker jobs** that construct these subtypes on purpose.
 
 ### I — Interface Segregation
@@ -106,7 +108,7 @@ Before finishing a package/app review, confirm you can answer **yes** or cite �
 - [ ] Concrete dependency cycle **or** DIP theater (type-alias port / Container token→`new` / fake `create*Port`) **or** explicit “neither found”
 - [ ] Jobs/worker **or** BFF/compose swept **or** both absent
 - [ ] ≥1 name-theater body read (`Facade` / `Container` / `*Port*` alias / plugin registry / `EventBus`) **or** none present
-- [ ] Template-method step-skip **or** SortedList/Money/cache-miss lie **or** explicit “no subtle LSP in tree”
+- [ ] Template-method step-skip **or** SortedList/Money/cache-miss lie **or** identity-returning override on an effectful base **or** explicit “no subtle LSP in tree”
 - [ ] Generated / satellite noise noted once (`generated/mod-*`, policies, webhooks, steps) **or** absent
 
 If any checkbox is unchecked without a written reason (“folder missing” / “searched, none”), the audit is incomplete — keep searching.

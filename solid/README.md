@@ -145,7 +145,7 @@ These tools complement the Cursor preset — they catch structural regressions t
 
 - Prefer one reason to change per module (S) — including utils, validators, repos, and UI shells
 - Extend with strategies/composition instead of editing closed cores (O) — hunt **scattered** switches, not only the largest service; defs folders do not clear a closed factory
-- Subtypes must honor base contracts; prefer composition when inheritance would lie (L) — also follow call sites on pages/layouts/routes/workers; watch template-method skips
+- Subtypes must honor base contracts; prefer composition when inheritance would lie (L) — also follow call sites on pages/layouts/routes/workers; watch template-method skips, conditional identity on effectful bases, and sibling subtypes after one OK type
 - Prefer small role interfaces over fat ports (I)
 - Depend on abstractions; inject concrete adapters at the edge (D) — flag concrete↔concrete cycles, `new` in UI/API, and DIP theater (type-alias ports / fake Container)
 - Package/app audits must pass the `audit-coverage.md` gate (do not stop after one god class; sweep workers/BFF/bus/config when present; do not trust Strategy/Factory/Facade/Port names alone)

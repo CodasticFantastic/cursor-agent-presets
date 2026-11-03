@@ -39,10 +39,12 @@ Smells to flag in reviews. Pair with `principles-table.md`, `code-patterns.md`, 
 |-------|--------------|-------------|
 | `throw new Error("not supported")` in override | Callers of the base cannot rely on behavior | Split interfaces; do not inherit the capability |
 | Empty override / no-op that the base documents as work | Silent contract break | Composition or narrower type |
+| **Conditional no-op subtype** | Override sometimes returns the input / early-exits with no effect while the base (or type name) promises real work — e.g. policy/validator/save/notify that is identity below a threshold | Narrow the base contract (“may be identity”), or don’t subtype — separate type / composition |
+| **Sibling blindness** | One honest non-subtype in a hierarchy file clears L; a neighboring concrete that `extends` the effectful base still breaks callers | After classifying one type, enumerate **every** concrete subtype of the same base in that module |
 | Subclass needing extra mandatory setup | Stronger precondition | Factory that returns a ready instance; or don’t subtype |
 | Narrowed return that drops base guarantees | Weaker postcondition | Preserve the contract or change the base type |
 | **Invariant-breaking setters** (Square/Rectangle) | Helpers written for the base get wrong results | Separate types; immutable dimensions; no subtype lie |
-| **Postcondition inversion** (“Discount” that raises price; `NaN`) | Callers of `Discount` cannot rely on “price does not increase” / finite number | Different type or documented `PriceAdjuster` |
+| **Postcondition inversion** (effectful base that raises / returns `NaN` / inverts the promised direction) | Callers cannot rely on “does not worsen” / finite number | Different type or documented adjuster that is not a subtype of the effectful base |
 | **Read-only / cache subtype that lies on wipe/save** | Substituting breaks `upsertAll`-style callers | Narrow ports: `Readable` vs `Writable` |
 | **Fake polymorphism** (PayPal type charges via Stripe) | Type name lies about behavior | Honest adapter or shared gateway port |
 | **Buried LSP demos** | Hierarchy file audited; pages/layouts/report routes/**worker jobs** still construct the bad subtype | Grep call sites; file those paths too |
