@@ -21,6 +21,7 @@ Do **not** rename, move or flatten any folders — Cursor expects this precise s
 | ------------------------ | ------------------------------------------------------------------------------------------------ | ---------------- |
 | [`wcag-2.2`](./wcag-2.2) | Full WCAG 2.2 accessibility implementation (A/AA/AAA) with rules, skill, subagent and hooks      | Frontend / UI    |
 | [`solid`](./solid)       | SOLID design principles (pragmatic / strict / educational) with rules, skill, subagent and hooks | Application code |
+| [`kiss`](./kiss)         | KISS simplicity (clarity, YAGNI, delayed abstraction, small surfaces) with rules, skill, subagent and hooks | Application code |
 
 > More presets will be added over time (security, TDD, React patterns, etc.).
 
