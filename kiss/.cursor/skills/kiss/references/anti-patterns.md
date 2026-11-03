@@ -28,6 +28,7 @@ Smells to flag in reviews. Pair with `principles-table.md`, `code-patterns.md`, 
 |-------|--------------|-------------|
 | Interface + factory + base for one concrete | Ceremony without payoff | Use the concrete; extract on second need |
 | Premature DI container for a tiny module | Indirection tax | Constructor/params at the composition root only |
+| String-token `resolve` / service locator where a token name (e.g. `OrderRepository`, `IUserPort`) returns a different concrete (e.g. raw `prisma`, DB client) | Name lies; hides hard-wiring behind “DI” | Read every `token → return` branch; file the mismatch; prefer direct construction |
 | Generic “framework” wrapping one use case | Readers learn a fake platform | Inline the feature |
 | Repository / gateway ports never swapped and never tested via fakes | Unused seam | Concrete until test or second adapter needs a port |
 | Deep inheritance for shared bags of methods | Fragile reuse | Composition of small helpers |

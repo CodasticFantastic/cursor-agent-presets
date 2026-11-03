@@ -52,6 +52,7 @@ Use ripgrep / semantic search. Record hits even when the file looks “periphera
 - `abstract class` with one subclass.
 - Wrapper packages that only re-export another module.
 - Generic “engine/framework” folders owned by one feature.
+- `Container` / `resolve(token)` / service locator: read **every** branch; if a port-/repo-named token returns a raw concrete (`prisma`, client, god), file it — do not stop at “has a container”.
 
 ### surface
 
