@@ -45,6 +45,7 @@ Use ripgrep / semantic search. Record hits even when the file looks “periphera
 - Feature flags read once and hardcoded in prod.
 - Config keys never referenced outside the schema.
 - Plugin registries with zero plugins.
+- Commented-out speculative paths in the hot path (`event-sourcing`, `outbox`, providers, “for later” blocks) — still YAGNI even when inactive.
 
 ### abstraction
 
@@ -53,12 +54,14 @@ Use ripgrep / semantic search. Record hits even when the file looks “periphera
 - Wrapper packages that only re-export another module.
 - Generic “engine/framework” folders owned by one feature.
 - `Container` / `resolve(token)` / service locator: read **every** branch; if a port-/repo-named token returns a raw concrete (`prisma`, client, god), file it — do not stop at “has a container”.
+- Vendor-named clients (`PrismaClient`, `*Client`, SDK wrappers): open the **body** — `Map` / in-memory / stub under a real-product name is a finding (clarity / abstraction lie), not an “OK concrete”.
 
 ### surface
 
 - Exported symbols with no importers (dead public API).
 - Options/props types with many optional fields unused at call sites.
 - Duplicate public functions that wrap each other.
+- A solitary unused tiny util (no importers) at `pragmatic`: Medium max or skip — never Critical, and never treat that clean file as a package-wide pass.
 
 ### deps
 

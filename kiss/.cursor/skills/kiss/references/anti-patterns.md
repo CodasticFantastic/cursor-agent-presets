@@ -29,6 +29,7 @@ Smells to flag in reviews. Pair with `principles-table.md`, `code-patterns.md`, 
 | Interface + factory + base for one concrete | Ceremony without payoff | Use the concrete; extract on second need |
 | Premature DI container for a tiny module | Indirection tax | Constructor/params at the composition root only |
 | String-token `resolve` / service locator where a token name (e.g. `OrderRepository`, `IUserPort`) returns a different concrete (e.g. raw `prisma`, DB client) | Name lies; hides hard-wiring behind “DI” | Read every `token → return` branch; file the mismatch; prefer direct construction |
+| Type/class named like a real vendor SDK (`PrismaClient`, `*Client`, Stripe/PayPal wrapper) whose body is `Map` / in-memory / stub | Name lies; readers assume real infra | Open the body; file the lie; rename or use an honest fake |
 | Generic “framework” wrapping one use case | Readers learn a fake platform | Inline the feature |
 | Repository / gateway ports never swapped and never tested via fakes | Unused seam | Concrete until test or second adapter needs a port |
 | Deep inheritance for shared bags of methods | Fragile reuse | Composition of small helpers |
@@ -42,8 +43,9 @@ Smells to flag in reviews. Pair with `principles-table.md`, `code-patterns.md`, 
 | Options object with 10+ mostly optional unused fields | Call sites guess which matter | Required fields only; split configs by use case |
 | Public export of internals “just in case” | Accidental API lock-in | Export the minimal surface |
 | Function with many parameters mostly defaulted | Hard to call correctly | Object with few required keys, or split functions |
-| Dead code / commented-out blocks | Noise | Delete (VCS remembers) |
+| Dead code / commented-out blocks (esp. speculative paths left in services) | Noise; hides “for later” product surface | Delete (VCS remembers); file under yagni when the comment is event-sourcing / outbox / provider theater |
 | Dual APIs doing the same thing (`doX` + `doXAsync` synonyms) | Choice without benefit | Keep one |
+| Solitary unused export of a tiny helper (no importers) | Real but low-cost surface noise | At `pragmatic`: Medium or skip — do not escalate; do not treat the file as a package pass |
 
 ## deps — Justified dependencies
 
@@ -74,6 +76,7 @@ Do **not** treat these as Critical by default:
 - Exhaustive `switch` on a small stable union (2–3 cases, low churn)
 - Shared helper extracted after real duplication appeared
 - Clear domain types that look “extra” but prevent primitive obsession
+- A decoy / unused one-liner util with no call sites (note it at most as Medium; never Critical; never a package pass)
 
 Escalate when there is evidence of unused ceremony, dead options, speculative frameworks, or nesting that obscures the requirement.
 
