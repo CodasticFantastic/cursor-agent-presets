@@ -17,9 +17,10 @@ Do **not** rename, move or flatten any folders — Cursor expects this precise s
 
 ## Available Presets
 
-| Preset                   | Description                                                                                 | Target        |
-| ------------------------ | ------------------------------------------------------------------------------------------- | ------------- |
-| [`wcag-2.2`](./wcag-2.2) | Full WCAG 2.2 accessibility implementation (A/AA/AAA) with rules, skill, subagent and hooks | Frontend / UI |
+| Preset                   | Description                                                                                      | Target           |
+| ------------------------ | ------------------------------------------------------------------------------------------------ | ---------------- |
+| [`wcag-2.2`](./wcag-2.2) | Full WCAG 2.2 accessibility implementation (A/AA/AAA) with rules, skill, subagent and hooks      | Frontend / UI    |
+| [`solid`](./solid)       | SOLID design principles (pragmatic / strict / educational) with rules, skill, subagent and hooks | Application code |
 
 > More presets will be added over time (security, TDD, React patterns, etc.).
 
@@ -49,6 +50,7 @@ cp -r /path/to/agent-presets/wcag-2.2/.cursor ./
 ```
 
 **Wrong (do not do this):**
+
 - Copying only individual files
 - Renaming `.cursor` to something else
 - Putting the contents of `.cursor` directly into the project root

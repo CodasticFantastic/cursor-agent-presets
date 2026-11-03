@@ -1,0 +1,6 @@
+{
+  "level": "pragmatic",
+  "paradigm": "oop",
+  "languages": ["typescript", "javascript"],
+  "principles": ["S", "O", "L", "I", "D"]
+}
