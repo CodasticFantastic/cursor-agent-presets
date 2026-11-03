@@ -8,15 +8,17 @@ Do **not** rename, move or flatten any folders — Cursor expects this precise s
 
 ## Table of Contents
 
-- [Available Presets](#available-presets)
-- [How to Use](#how-to-use)
-- [Required Cursor Structure](#required-cursor-structure)
-- [Contributing](#contributing)
+- [Agent Presets](#agent-presets)
+  - [Table of Contents](#table-of-contents)
+  - [Available Presets](#available-presets)
+  - [How to Use](#how-to-use)
+  - [Required Cursor Structure](#required-cursor-structure)
+  - [Contributing](#contributing)
 
 ## Available Presets
 
-| Preset | Description | Target |
-|--------|-------------|--------|
+| Preset                   | Description                                                                                 | Target        |
+| ------------------------ | ------------------------------------------------------------------------------------------- | ------------- |
 | [`wcag-2.2`](./wcag-2.2) | Full WCAG 2.2 accessibility implementation (A/AA/AAA) with rules, skill, subagent and hooks | Frontend / UI |
 
 > More presets will be added over time (security, TDD, React patterns, etc.).
@@ -68,12 +70,12 @@ Cursor only recognizes the following exact layout:
 └── hooks.json                # + optional hooks/ scripts
 ```
 
-| Layer | Exact Location | Purpose |
-|-------|----------------|---------|
-| Rules | `.cursor/rules/*.mdc` | Always-on or file-type constraints |
-| Skill | `.cursor/skills/<name>/SKILL.md` | On-demand detailed workflow + references |
-| Subagent | `.cursor/agents/*.md` | Specialized reviewer with own context |
-| Hooks | `.cursor/hooks.json` | Lightweight automation after edits |
+| Layer    | Exact Location                   | Purpose                                  |
+| -------- | -------------------------------- | ---------------------------------------- |
+| Rules    | `.cursor/rules/*.mdc`            | Always-on or file-type constraints       |
+| Skill    | `.cursor/skills/<name>/SKILL.md` | On-demand detailed workflow + references |
+| Subagent | `.cursor/agents/*.md`            | Specialized reviewer with own context    |
+| Hooks    | `.cursor/hooks.json`             | Lightweight automation after edits       |
 
 If this structure is broken, Cursor will **not** load the rules, skills or agents.
 

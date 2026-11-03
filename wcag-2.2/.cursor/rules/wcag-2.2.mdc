@@ -1,5 +1,5 @@
 ---
-description: "WCAG 2.2 accessibility standards for frontend code. Apply when generating or reviewing HTML, CSS, JS, React, or web UI."
+description: "WCAG 2.1 or 2.2 accessibility standards for frontend code. Apply when generating or reviewing HTML, CSS, JS, React, or web UI. Defaults come from .cursor/skills/wcag-2.2/wcag.config.json."
 globs: "**/*.{html,tsx,jsx,vue,svelte,css,scss}"
 alwaysApply: false
 ---
@@ -8,11 +8,12 @@ alwaysApply: false
 
 When generating or modifying frontend code:
 
-- Target **WCAG 2.2 Level AA** by default (all Level A + Level AA criteria).
-- Only enforce Level AAA criteria if the user explicitly asks for AAA.
+- Read `.cursor/skills/wcag-2.2/wcag.config.json` first. `standard` is `2.1` or `2.2`. `level` is `A`, `AA`, or `AAA`. The shipped file is WCAG 2.2 AA. A standard or level the user states in chat overrides the file for that request. If the file is missing or invalid, use WCAG 2.2 AA.
+- When the resolved standard is **WCAG 2.1**, do not enforce 2.4.11, 2.4.12, 2.4.13, 2.5.7, 2.5.8, 3.2.6, 3.3.7, 3.3.8, or 3.3.9. 4.1.1 exists in 2.1 and was removed in 2.2; do not treat it as a practical HTML failure.
+- Apply Level AAA criteria when the resolved level is AAA. The bullets below that cite a 2.2-only criterion apply only when the resolved standard is 2.2.
 - Use semantic HTML first. Avoid ARIA unless necessary for custom widgets.
 - Ensure keyboard operability and visible focus indicators (`:focus-visible`).
-- Interactive targets must be at least 24×24 CSS pixels (or meet spacing exception) — SC 2.5.8.
+- Interactive targets must be at least 24×24 CSS pixels, unless the spacing or inline exception applies — SC 2.5.8. A link inside a sentence is exempt.
 - Focused elements must not be entirely obscured by sticky headers, footers, or banners — use `scroll-padding` — SC 2.4.11.
 - Provide single-pointer alternatives for any dragging interactions — SC 2.5.7.
 - Authentication flows must support password managers and paste; avoid cognitive tests without alternatives — SC 3.3.8.
@@ -22,4 +23,4 @@ When generating or modifying frontend code:
 - Images need appropriate `alt` text; form controls need labels; page needs `lang`.
 - 4.1.1 Parsing is obsolete in WCAG 2.2 — do not enforce it.
 
-Refer to the `wcag-2.2` skill and the full table in `.cursor/skills/wcag-2.2/references/wcag-2.2-success-criteria-table.md` for the complete list of criteria and detailed guidance. For deep audits, delegate to the `a11y-reviewer` subagent.
+Refer to the `wcag-2.2` skill. WCAG 2.2 table: `.cursor/skills/wcag-2.2/references/wcag-2.2-success-criteria-table.md`. WCAG 2.1 table: `.cursor/skills/wcag-2.2/references/wcag-2.1-success-criteria-table.md`. Differences: `.cursor/skills/wcag-2.2/references/wcag-2.1-vs-2.2.md`. For deep audits, delegate to the `a11y-reviewer` subagent.

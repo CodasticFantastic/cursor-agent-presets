@@ -19,13 +19,23 @@ main {
 
 ## Target Size (2.5.8)
 
+`min-width` and `min-height` do not apply to a non-replaced inline element. A text link is `display: inline` by default, and 2.5.8 exempts a target that sits in a sentence or is constrained by the line-height of non-target text (Inline exception). Do not force 24×24 CSS pixels on those links.
+
 ```css
-/* Minimum target size */
+/* Controls. Not text links inside a sentence. */
 button,
-a,
 input[type="checkbox"],
 input[type="radio"],
 [role="button"] {
+  min-width: 24px;
+  min-height: 24px;
+}
+
+/* Link used as a control. inline-flex makes the minimum size apply. */
+a.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   min-width: 24px;
   min-height: 24px;
 }
@@ -41,18 +51,15 @@ input[type="radio"],
 ## Dragging Movements Alternative (2.5.7)
 
 ```html
-<!-- Prefer native range over custom drag slider -->
+<!-- Prefer native range over a custom drag slider.
+     ARIA in HTML: the browser exposes min, max, and value as the slider
+     aria-valuemin, aria-valuemax, and aria-valuenow.
+     Authors SHOULD NOT set aria-valuemin or aria-valuemax on input type=range,
+     and MUST NOT set them when min or max is also present.
+     Set aria-valuemin, aria-valuemax, and aria-valuenow only on a custom
+     role="slider" that has no native min, max, or value. -->
 <label for="volume">Volume</label>
-<input
-  type="range"
-  id="volume"
-  min="0"
-  max="100"
-  value="50"
-  aria-valuemin="0"
-  aria-valuemax="100"
-  aria-valuenow="50"
-/>
+<input type="range" id="volume" min="0" max="100" value="50" />
 
 <!-- For custom drag: provide buttons -->
 <div class="sortable-list">

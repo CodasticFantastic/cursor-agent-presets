@@ -1,7 +1,8 @@
 # WCAG 2.2 – Success Criteria Table (A / AA / AAA)
 
 Complete, readable table for the AI agent.  
-**WCAG 2.2** = 86 criteria (4.1.1 Parsing removed, 9 new added).
+**WCAG 2.2** = 86 criteria (4.1.1 Parsing removed, 9 new added).  
+For the WCAG 2.1 table (78 criteria) and the migration delta, load `references/wcag-2.1-success-criteria-table.md` and `references/wcag-2.1-vs-2.2.md`.
 
 **Conformance levels (important):**
 - **Level A** = only criteria marked ✔️ in column A (minimum).
@@ -78,7 +79,7 @@ When auditing, always check the column that matches the requested level (default
 | **2.5.5** | Target Size (Enhanced) | | | ✔️ | Min. 44×44 CSS px |
 | **2.5.6** | Concurrent Input Mechanisms | | | ✔️ | Do not restrict input methods |
 | **2.5.7** | Dragging Movements **[NEW]** | | ✔️ | | Single-pointer alternative for dragging |
-| **2.5.8** | Target Size (Minimum) **[NEW]** | | ✔️ | | Min. 24×24 CSS px (or spacing exception) |
+| **2.5.8** | Target Size (Minimum) **[NEW]** | | ✔️ | | Min. 24×24 CSS px (or spacing or inline exception) |
 | **3.1.1** | Language of Page | ✔️ | | | `lang` on `<html>` |
 | **3.1.2** | Language of Parts | | ✔️ | | Language changes marked |
 | **3.1.3** | Unusual Words | | | ✔️ | Explanations of difficult words |
@@ -107,5 +108,5 @@ When auditing, always check the column that matches the requested level (default
 
 ---
 
-**Source:** Official WCAG 2.2 Recommendation (W3C REC 12 December 2024).  
-Single-file reference for the agent (modeled after the WCAG 2.1 table PDF).
+**Source:** Official WCAG 2.2 Recommendation (W3C REC 12 December 2024, https://www.w3.org/TR/WCAG22/).  
+Fallback PDF: `assets/WCAG_2.2.pdf`. Open it only when this table does not answer the question. Do not load the whole PDF into context.
