@@ -22,7 +22,7 @@ Narrow `principles` to a subset (e.g. `["S","D"]`) when you want a focused audit
 - `references/principles-table.md` — checklist for S / O / L / I / D with pass/fail signals
 - `references/code-patterns.md` — ready-to-use TypeScript (and functional) patterns
 - `references/anti-patterns.md` — smells, fixes, and pragmatic false positives
-- `references/audit-coverage.md` — **mandatory layer sweep** for package/app audits (utils, pages, scattered OCP, LSP call sites, DIP cycles)
+- `references/audit-coverage.md` — **mandatory layer sweep** for package/app audits (utils, pages, workers/BFF/bus/config, name theater, scattered OCP, LSP call sites, DIP cycles/theater)
 - `solid.config.json` — default level, paradigm, and enabled principles
 
 ```json
@@ -144,11 +144,11 @@ These tools complement the Cursor preset — they catch structural regressions t
 ## What the agent knows by default
 
 - Prefer one reason to change per module (S) — including utils, validators, repos, and UI shells
-- Extend with strategies/composition instead of editing closed cores (O) — hunt **scattered** switches, not only the largest service
-- Subtypes must honor base contracts; prefer composition when inheritance would lie (L) — also follow call sites on pages/layouts/routes
+- Extend with strategies/composition instead of editing closed cores (O) — hunt **scattered** switches, not only the largest service; defs folders do not clear a closed factory
+- Subtypes must honor base contracts; prefer composition when inheritance would lie (L) — also follow call sites on pages/layouts/routes/workers; watch template-method skips
 - Prefer small role interfaces over fat ports (I)
-- Depend on abstractions; inject concrete adapters at the edge (D) — flag concrete↔concrete cycles and `new` in UI/API
-- Package/app audits must pass the `audit-coverage.md` gate (do not stop after one god class; do not trust Strategy/Factory names alone)
+- Depend on abstractions; inject concrete adapters at the edge (D) — flag concrete↔concrete cycles, `new` in UI/API, and DIP theater (type-alias ports / fake Container)
+- Package/app audits must pass the `audit-coverage.md` gate (do not stop after one god class; sweep workers/BFF/bus/config when present; do not trust Strategy/Factory/Facade/Port names alone)
 - At pragmatic level: do not invent unused interfaces or layers; still escalate cross-layer concrete coupling
 - Functional mapping when `paradigm` is `functional`
 

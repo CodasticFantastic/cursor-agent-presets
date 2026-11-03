@@ -16,16 +16,20 @@ Smells to flag in reviews. Pair with `principles-table.md`, `code-patterns.md`, 
 | UI component that loads, maps, and posts | View + I/O + policy change together | Hook/service for data; presentational component for UI |
 | **Page/layout that boots domain + LSP demos** | Shell changes when pricing/auth/infra change | Shell renders chrome; domain init stays in app services |
 | **God hook / god store / god form** | One surface owns auth, checkout, SQL, flags, secrets | Split by user journey; no I/O inside global store |
+| **Logger / config / token helper smuggling side jobs** | Logger emails oncall; `env` ships live secrets as defaults; “JWT” embeds payment keys | One concern per module; secrets via real secret store at the edge |
 
 ## O — Open/Closed
 
 | Smell | Why it fails | Typical fix |
 |-------|--------------|-------------|
 | Type `switch` edited for every variant | Extension requires modifying closed core | Strategy / polymorphic handlers |
-| **Scattered closed switches** | Same OCP pain in tax countries, feature flags, geo IP ranges, payment factory, notification channels, coupon codes, API `action`, UI `mode` — agent misses all but one | List **each** magnet with `path:line`; registry/map or strategies per family |
+| **Scattered closed switches** | Same OCP pain in tax countries, feature flags, geo IP ranges, payment factory, notification channels, coupon codes, API `action`, UI `mode`, DI **token**, **locale** — agent misses all but one | List **each** magnet with `path:line`; registry/map or strategies per family |
 | Feature flags piled inside one service | Same core absorbs every product branch | Separate policies or modules per flag family |
 | Base class grows “shared” email/HTML/audit methods | Every new payment method still edits the base | Composition of narrow collaborators |
 | Copy-paste variant classes with tiny diffs | Closed reuse missing; still edit many places | Shared composition + small strategies |
+| **Plugin registry with hardcoded allowlist** | Looks open; `ENABLED_*` / closed name list still requires editing the registry file | True registration API or config-driven enablement outside the core |
+| **`*-defs/` theater** | Def folders look like OCP; real factory/router/`isOn` remains a closed if-chain | Wire defs into a map/registry the core does not edit per variant |
+| **Locale / i18n table deciding tax or domain** | i18n churn forces tax edits (and vice versa) | Keep translation tables separate from policy tables |
 
 **Pragmatic exception:** a stable, exhaustive union with 2–3 cases and low churn is acceptable until a fourth variant appears — still **mention** it on package audits.
 
@@ -41,7 +45,9 @@ Smells to flag in reviews. Pair with `principles-table.md`, `code-patterns.md`, 
 | **Postcondition inversion** (“Discount” that raises price; `NaN`) | Callers of `Discount` cannot rely on “price does not increase” / finite number | Different type or documented `PriceAdjuster` |
 | **Read-only / cache subtype that lies on wipe/save** | Substituting breaks `upsertAll`-style callers | Narrow ports: `Readable` vs `Writable` |
 | **Fake polymorphism** (PayPal type charges via Stripe) | Type name lies about behavior | Honest adapter or shared gateway port |
-| **Buried LSP demos** | Hierarchy file audited; pages/layouts/report routes still construct the bad subtype | Grep call sites; file those paths too |
+| **Buried LSP demos** | Hierarchy file audited; pages/layouts/report routes/**worker jobs** still construct the bad subtype | Grep call sites; file those paths too |
+| **Template-method step skip** | Subclass skips a required step (receipt, validate, persist) while callers assume the full template ran | Don’t inherit the template; compose optional steps explicitly |
+| **Lying value / collection contracts** | “Sorted” list that doesn’t sort on push; “immutable” Money that mutates / mixes currency; cache miss → `{}` | Honor documented invariants or rename the type |
 
 ## I — Interface Segregation
 
@@ -53,6 +59,7 @@ Smells to flag in reviews. Pair with `principles-table.md`, `code-patterns.md`, 
 | Test mocks with 10 empty stubs | Test pain mirrors ISP violation | Narrow the port the SUT needs |
 | **Admin/UI forced to call unused methods** | Page exists to exercise ISP junk | Drop methods from the port the UI needs |
 | **Fat handler input** (always requires db+mailer+stripe+fs) | Most actions ignore most fields | Narrow context per use case |
+| **“Narrow” type that extends a fat port** | Name claims segregation; body inherits every unused method | Actually narrow: only the methods the client needs |
 
 ## D — Dependency Inversion
 
@@ -65,6 +72,8 @@ Smells to flag in reviews. Pair with `principles-table.md`, `code-patterns.md`, 
 | Circular package imports across layers | Dependency arrow points the wrong way | Invert with a port owned by the inner layer |
 | **Concrete↔concrete cycles** (mailer↔payment↔db each `new` the others) | No stable inner policy; testing explodes | Ports owned by application layer; adapters depend inward only |
 | UI importing payment/DB modules | View depends on infrastructure detail | Server actions / hooks over ports |
+| **DIP theater** (`type IFooPort = Concrete`; `create*Port()` → `new`; Port base that dynamic-imports vendor; Container token→`new`) | Name says port/DI; body hardcodes concretes | Real interface + composition root registration |
+| **Event bus / Facade that is a god + concretes** | “Messaging” / “Facade” hides orchestration and `new Gateway` | Thin bus/facade over injected ports; no vendor `new` inside |
 
 ## False positives (especially at `pragmatic`)
 
@@ -82,6 +91,8 @@ Escalate when there is evidence of churn, test pain, **cross-layer** coupling, o
 Flag the **audit itself** as incomplete when:
 
 - Only the largest god class is cited and utils/pages/API were not opened
-- Filenames were trusted without reading bodies
+- Filenames were trusted without reading bodies (`Facade` / `Container` / `Port` / `Plugin` / `EventBus` unread)
+- Workers, BFF, bus, or config exist in the tree but were never opened
 - One clean shell/layout was treated as a package-wide pass
 - Duplicate violations across layers were collapsed into a vague sentence with no paths
+- `*-defs/` were treated as OCP-compliant without checking the still-closed factory/router

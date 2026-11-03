@@ -59,8 +59,10 @@ Primary examples are TypeScript. Patterns transfer to other languages; adapt syn
 - One mega-interface implemented “partially” by several clients; admin UI calling unused methods (I)
 - `new ConcreteService()` buried inside domain **and** the same concrete in hooks/components/API (D)
 - Concrete↔concrete cycles (mailer constructs DB/payment and vice versa) (D)
-- Stopping the audit after naming one god class while utils/pages still violate
-- Trusting `*Strategy*` / `*Repository*` / `*Factory*` names without reading bodies
+- Stopping the audit after naming one god class while utils/pages/workers/BFF still violate
+- Trusting `*Strategy*` / `*Repository*` / `*Factory*` / `*Facade*` / `*Container*` / `*Port*` / plugin / EventBus names without reading bodies
+- Treating `*-defs/` as OCP-compliant while a closed factory/router/`isOn` remains
+- DIP theater: type-alias “ports”, `create*Port()` → `new Concrete`, Container token switches
 - Premature interface with a single never-swapped implementation when level is `pragmatic`
 
 Always explain the design rationale when generating or refactoring code.
@@ -92,7 +94,7 @@ Principles: <enabled set>
 Verdict: this is a design assessment, not a certification.
 
 ### Coverage (package/app audits)
-- Layers swept: <types | utils | repos | adapters | services | validators | store/hooks | api | components | pages>
+- Layers swept: <types | utils | repos | adapters | services | validators | store/hooks | api | components | pages | jobs/workers | bff | messaging | config/i18n>
 - Gate: pass | incomplete — <missing hunt or “folder absent”>
 
 ### Violations visible in code

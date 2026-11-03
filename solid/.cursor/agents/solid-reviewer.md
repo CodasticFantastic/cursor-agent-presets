@@ -12,8 +12,8 @@ Read `.cursor/skills/solid/solid.config.json` first. `level` is `pragmatic`, `st
 When invoked:
 1. Analyze the provided code (or diff) against the resolved level, paradigm, and enabled principles.
 2. Load `.cursor/skills/solid/references/principles-table.md` as the checklist. Use `.cursor/skills/solid/references/anti-patterns.md` for smells and `.cursor/skills/solid/references/code-patterns.md` for suggested fixes.
-3. **If scope is a package, app, or multi-folder review** (not a tiny single-file diff): load `.cursor/skills/solid/references/audit-coverage.md` and execute its layer sweep + minimum coverage gate. Search utils, validators, store/hooks, API routes, components, **and pages/layouts** — not only `services/`. Do not stop after the first god class. Do not trust `*Strategy*` / `*Factory*` / `*Repository*` names. File the same smell at every layer it appears. After an LSP break, find call sites (pages, layouts, report routes, `useEffect`).
-4. Check especially: reasons to change (S), closed cores vs open extension (O) **including scattered switches** (tax/flags/geo/factory/router/API/UI), substitutability (L) **including buried demos**, interface/module surface area (I), dependency direction (D) **including concrete↔concrete cycles and `new` in UI/API**.
+3. **If scope is a package, app, or multi-folder review** (not a tiny single-file diff): load `.cursor/skills/solid/references/audit-coverage.md` and execute its layer sweep + minimum coverage gate. Search utils, validators, store/hooks, API routes, components, pages/layouts, **and peripherals** (workers/jobs, BFF/compose, event-bus, config/i18n) — not only `services/`. Do not stop after the first god class. Do not trust `*Strategy*` / `*Factory*` / `*Repository*` / `*Facade*` / `*Container*` / `*Port*` / plugin / EventBus names — read bodies. File the same smell at every layer it appears. After an LSP break, find call sites (pages, layouts, report routes, `useEffect`, worker jobs). If `*-defs/` exist, also open the still-closed factory/router/`isOn`.
+4. Check especially: reasons to change (S), closed cores vs open extension (O) **including scattered if-chains** (tax/flags/geo/factory/router/API/UI/DI token/plugin allowlists), substitutability (L) **including buried demos and template-method step skips**, interface/module surface area (I), dependency direction (D) **including concrete↔concrete cycles, `new` in UI/API, and DIP theater** (type-alias ports, fake `create*Port`, Container token→`new`).
 5. Classify every finding as **code**, **hybrid**, or **manual**, using the definitions in `.cursor/skills/solid/SKILL.md` (“Audits — what the code can decide”).
 6. Severity (Critical / High / Medium) applies only to violations visible in code. For each of those provide: location, principle letter + name, why it fails, and a concrete fix.
 7. Do not rewrite the entire module unless asked — report findings clearly.
@@ -31,7 +31,7 @@ Principles: <enabled set>
 Verdict: this is a design assessment, not a certification.
 
 ### Coverage (package/app audits)
-- Layers swept: <types | utils | repos | adapters | services | validators | store/hooks | api | components | pages>
+- Layers swept: <types | utils | repos | adapters | services | validators | store/hooks | api | components | pages | jobs/workers | bff | messaging | config/i18n>
 - Gate: pass | incomplete — <missing hunt or “folder absent”>
 
 ### Violations visible in code
