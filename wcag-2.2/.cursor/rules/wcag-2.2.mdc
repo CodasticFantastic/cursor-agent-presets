@@ -1,0 +1,25 @@
+---
+description: "WCAG 2.2 accessibility standards for frontend code. Apply when generating or reviewing HTML, CSS, JS, React, or web UI."
+globs: "**/*.{html,tsx,jsx,vue,svelte,css,scss}"
+alwaysApply: false
+---
+
+# WCAG 2.2 Accessibility Rules
+
+When generating or modifying frontend code:
+
+- Target **WCAG 2.2 Level AA** by default (all Level A + Level AA criteria).
+- Only enforce Level AAA criteria if the user explicitly asks for AAA.
+- Use semantic HTML first. Avoid ARIA unless necessary for custom widgets.
+- Ensure keyboard operability and visible focus indicators (`:focus-visible`).
+- Interactive targets must be at least 24×24 CSS pixels (or meet spacing exception) — SC 2.5.8.
+- Focused elements must not be entirely obscured by sticky headers, footers, or banners — use `scroll-padding` — SC 2.4.11.
+- Provide single-pointer alternatives for any dragging interactions — SC 2.5.7.
+- Authentication flows must support password managers and paste; avoid cognitive tests without alternatives — SC 3.3.8.
+- Do not require re-entry of previously provided data in multi-step processes — SC 3.3.7.
+- Help mechanisms (contact, chat, FAQ) must appear in consistent order across pages — SC 3.2.6.
+- Text contrast ≥ 4.5:1 (normal), UI components ≥ 3:1.
+- Images need appropriate `alt` text; form controls need labels; page needs `lang`.
+- 4.1.1 Parsing is obsolete in WCAG 2.2 — do not enforce it.
+
+Refer to the `wcag-2.2` skill and the full table in `.cursor/skills/wcag-2.2/references/wcag-2.2-success-criteria-table.md` for the complete list of criteria and detailed guidance. For deep audits, delegate to the `a11y-reviewer` subagent.

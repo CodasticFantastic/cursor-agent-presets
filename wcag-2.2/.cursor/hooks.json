@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "hooks": {
+    "afterFileEdit": [
+      {
+        "command": "./.cursor/hooks/a11y-reminder.sh",
+        "timeout": 10
+      }
+    ]
+  }
+}
