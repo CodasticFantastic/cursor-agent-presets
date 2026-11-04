@@ -2,27 +2,30 @@
 
 Production-ready simplicity preset for Cursor IDE.
 
-It enforces and helps apply **Keep It Simple, Stupid** using the level and dimensions in `kiss.config.json`. The shipped file is **pragmatic** with all six dimensions: clarity, yagni, abstraction, surface, deps, flow.  
+It enforces and helps apply **Keep It Simple, Stupid** using the level and dimensions in `kiss.config.json`. The shipped file is **pragmatic** with all six dimensions: clarity, yagni, abstraction, surface, deps, flow.
 Change `level` to `strict` or `educational`, or narrow `dimensions`, in that file. A request in chat overrides the file for that turn.
 
 ## What this preset includes
 
 | Layer | File / Folder | Purpose |
 |-------|---------------|---------|
-| **Rules** | `.cursor/rules/kiss.mdc` | Automatically applied on source files. Forces KISS-aware generation. |
+| **Rules** | `.cursor/rules/kiss.mdc` | Applied on source files. Short reminders only. The skill owns the procedure. |
 | **Config** | `.cursor/skills/kiss/kiss.config.json` | Default `level`, `languages`, and `dimensions`. Read on every run. |
-| **Skill** | `.cursor/skills/kiss/` | On-demand full workflow, dimension checklist, patterns and anti-patterns. |
-| **Subagent** | `.cursor/agents/kiss-reviewer.md` | Specialized, independent KISS auditor (readonly). |
+| **Skill** | `.cursor/skills/kiss/` | The procedure: scope filter, evidence rules, and the report format. Catalogs stay in `references/`. |
+| **Subagent** | `.cursor/agents/kiss-reviewer.md` | Readonly auditor. Runs when asked, reads the skill, and returns a report to the parent. It does not keep its own template. |
 | **Hook** | `.cursor/hooks.json` + `hooks/kiss-reminder.sh` | After every source edit: logs a KISS reminder; runs ESLint complexity heuristics when available. |
-| **References** | `.cursor/skills/kiss/references/` | Dimensions table, code patterns, anti-patterns, audit coverage. Loaded on demand. |
+| **References** | `.cursor/skills/kiss/references/` | Working catalogs, loaded on demand. Each file owns one kind of change. |
 
 ### Key reference files
 
-- `references/principles-table.md` — checklist for clarity / yagni / abstraction / surface / deps / flow
-- `references/code-patterns.md` — ready-to-use TypeScript patterns (simple vs over-engineered)
-- `references/anti-patterns.md` — smells, fixes, false positives, and false simplicity
-- `references/audit-coverage.md` — **mandatory layer sweep** for package/app audits
-- `kiss.config.json` — default level and enabled dimensions
+Each catalog has one owner. A new smell, layer, or code shape goes in that file. It does not get pasted into the rule or the subagent.
+
+- `references/principles-table.md` — working source for clarity / yagni / abstraction / surface / deps / flow: meaning, pass/fail, severity
+- `references/code-patterns.md` — implementation shapes (TypeScript examples; adapt the syntax)
+- `references/anti-patterns.md` — smell catalog
+- `references/audit-coverage.md` — the only copy of the package/app layer sweep and coverage gate
+- `kiss.config.json` — default level, example languages, and enabled dimensions
+- `SKILL.md` — the only copy of the scope filter, the evidence rules, and the report format
 
 ```json
 {
@@ -34,11 +37,15 @@ Change `level` to `strict` or `educational`, or narrow `dimensions`, in that fil
 
 ## Levels
 
-- **pragmatic** — shipped default. Cut complexity where it hurts. Keep structure that already reduces real coupling or change risk.
-- **strict** — every new abstraction, option, dependency, and nested branch in scope needs a concrete justification.
-- **educational** — same technical bar as pragmatic, plus an explicit dimension rationale on material choices.
+Aligned with the level table in `SKILL.md`:
+
+- **pragmatic** — shipped default. Simplify where cognitive load, churn, or ceremony is real. Keep ports and layers that already reduce coupling.
+- **strict** — challenge every new abstraction, option, dependency, and nested branch in scope; demand justification. Every enabled dimension applies.
+- **educational** — same technical bar as pragmatic, plus an explicit rationale for each enabled dimension on every material design choice.
 
 The agent reads `kiss.config.json` before it generates or reviews design-sensitive code. Chat can override that file for one request.
+
+`languages` picks example syntax only. Rule `globs` attach reminders when matching files are edited. Skill `paths` scopes auto-surfacing of the skill for the same extensions. `/kiss` and `/kiss-reviewer` still work when invoked explicitly.
 
 ## Dimensions
 
@@ -50,6 +57,25 @@ The agent reads `kiss.config.json` before it generates or reviews design-sensiti
 | `surface` | Small public APIs, configs, and parameter lists |
 | `deps` | Justify every new package; prefer stdlib / existing stack |
 | `flow` | Shallow nesting, early returns, no pure-forward wrappers |
+
+## How the layers relate
+
+The skill is the procedure. The parent agent and `kiss-reviewer` both read it. The skill does not call the subagent.
+
+- The **parent** writes code and can do a review in the same chat.
+- **`kiss-reviewer`** is for an audit in a separate context. It returns notes and does not edit. The parent decides the next task and applies fixes.
+- Do not expect the subagent to start on its own after every edit. Invoke it with `/kiss-reviewer` or an explicit review request.
+
+When the guidance changes, edit the owner and leave the procedure alone:
+
+| Change | Edit |
+|--------|------|
+| Defaults | `kiss.config.json` |
+| What a dimension means | `references/principles-table.md` |
+| A smell | `references/anti-patterns.md` |
+| A code shape | `references/code-patterns.md` |
+| A layer or a coverage check | `references/audit-coverage.md` |
+| The workflow, the filter, or the report | `SKILL.md` |
 
 ## How to install
 
@@ -81,8 +107,8 @@ chmod +x .cursor/hooks/kiss-reminder.sh
 
 ### Combining with other presets
 
-If you already use [`solid`](../solid) or [`wcag-2.2`](../wcag-2.2), merge the contents of each preset’s `.cursor/` folders (rules, skills, agents, hooks) into one project `.cursor/`.  
-For hooks: merge the `afterFileEdit` command arrays in `hooks.json` so both reminder scripts run.
+If you already use [`solid`](../solid) or [`wcag-2.2`](../wcag-2.2), merge the contents of each preset’s `.cursor/` folders (rules, skills, agents, and hooks when present) into one project `.cursor/`.
+`solid` and `wcag-2.2` do not ship a hook. Keep the KISS `hooks.json` as-is, or merge `afterFileEdit` arrays only if another preset also ships hooks.
 
 KISS and SOLID complement each other: both reject unused ceremony. KISS does **not** excuse god modules or hard-wiring infrastructure into domain code.
 
@@ -159,15 +185,11 @@ These tools complement the Cursor preset — they catch complexity regressions t
 
 ## What the agent knows by default
 
-- Prefer clarity over cleverness — named steps beat dense one-liners
-- Do not build speculative providers, flags, or “for later” branches (yagni)
-- Wait for a second real use case before interfaces, factories, and plugins
-- Keep public APIs and options small; delete dead code
-- Justify every new dependency; prefer stdlib and the existing stack
-- Prefer early returns and shallow nesting; remove pure-forward wrappers
-- Package/app audits must pass the `audit-coverage.md` gate
-- At pragmatic level: do not strip ports/layers that already reduce real coupling
+- Apply the enabled dimensions from `kiss.config.json` at the resolved level
+- Do not strip useful structure at `pragmatic`; do not skip enabled dimensions at `strict`
+- Concrete smells and layer hunts live in `references/` — open them on review or package/app audit
 - False simplicity (god modules, hidden globals, deleting tests) is not KISS
+- Use `/kiss-reviewer` for a readonly audit in a separate context; the parent applies fixes
 
 ## Source
 
@@ -175,5 +197,5 @@ Based on the KISS principle (Keep It Simple, Stupid) as commonly used in softwar
 
 ---
 
-Copy the `.cursor/` folder as-is.  
+Copy the `.cursor/` folder as-is.
 The structure is required for Cursor to load the rules, skill and agent correctly.

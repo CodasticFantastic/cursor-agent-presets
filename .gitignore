@@ -1,4 +1,3 @@
 *.zip
-/shity-solid-app/
-/shity-wcag.jsx
-/shity-kiss-app/
+/benchmarks
+/benchmark-results

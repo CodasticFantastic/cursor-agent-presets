@@ -1,6 +1,9 @@
 # KISS Audit Coverage — Package / App Sweep
 
-Use this checklist on **package- or app-scoped** reviews (not a single 20-line diff).  
+This file is the only copy of the layer sweep and the coverage gate. Add a layer or a hunt here, not in `SKILL.md`, the rule, or `kiss-reviewer`.
+
+**When to load:** more than one file, or any package/app scope. Do not use this checklist for single-file scope — still review that file.
+
 Goal: stop “one clever helper” audits that miss the same bloat in config, factories, routes, and UI.
 
 Load with `anti-patterns.md` and `principles-table.md`. Report every hit with `path:line` + dimension id.

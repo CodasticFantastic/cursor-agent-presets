@@ -20,7 +20,7 @@ Do **not** rename, move or flatten any folders — Cursor expects this precise s
 | Preset                   | Description                                                                                                      | Target           |
 | ------------------------ | ---------------------------------------------------------------------------------------------------------------- | ---------------- |
 | [`wcag-2.2`](./wcag-2.2) | WCAG 2.1 / 2.2 accessibility aid (A/AA/AAA) with a rule, a skill, and a readonly review subagent                | Frontend / UI    |
-| [`solid`](./solid)       | SOLID design principles (pragmatic / strict / educational) with a rule, a skill, a subagent, and a hook         | Application code |
+| [`solid`](./solid)       | SOLID design principles (pragmatic / strict / educational) with a rule, a skill, and a readonly review subagent | Application code |
 | [`kiss`](./kiss)         | KISS simplicity (clarity, YAGNI, delayed abstraction, small surfaces) with a rule, a skill, a subagent, and a hook | Application code |
 
 > More presets will be added over time (security, TDD, React patterns, etc.).
@@ -42,7 +42,7 @@ your-project/
 
 4. Restart Cursor (or reload the window).
 
-`solid` and `kiss` ship a hook inside `.cursor/`. `wcag-2.2` does not. Copying the whole `.cursor/` folder keeps whichever layers that preset actually contains. Omitting `hooks.json` does not stop rules, skills, or agents from loading.
+`kiss` ships a hook inside `.cursor/`. `solid` and `wcag-2.2` do not. Copying the whole `.cursor/` folder keeps whichever layers that preset actually contains. Omitting `hooks.json` does not stop rules, skills, or agents from loading.
 
 **Example (correct):**
 
@@ -71,7 +71,7 @@ Cursor loads each layer from its own path. A preset does not need every layer.
 │       └── references/       # Optional supporting files
 ├── agents/
 │   └── *.md                  # Subagents
-└── hooks.json                # Optional. Shipped with solid and kiss, not with wcag-2.2
+└── hooks.json                # Optional. Shipped with kiss, not with solid or wcag-2.2
 ```
 
 | Layer    | Exact Location                   | Purpose                                  |

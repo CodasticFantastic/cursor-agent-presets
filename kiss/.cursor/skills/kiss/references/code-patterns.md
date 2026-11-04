@@ -1,6 +1,8 @@
 # Code Patterns for KISS
 
-Practical TypeScript patterns. Prefer the smallest structure that meets the current requirement.
+Implementation shapes. Add a shape here, not in `SKILL.md`, the rule, or `kiss-reviewer`. Examples are TypeScript. Adapt the syntax to the file. `languages` in `kiss.config.json` does not limit which files these shapes apply to, and a new language does not need a new file.
+
+Prefer the smallest structure that meets the current requirement.
 
 ## clarity — Prefer boring and explicit
 

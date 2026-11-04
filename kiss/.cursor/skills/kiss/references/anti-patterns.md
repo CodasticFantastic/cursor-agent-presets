@@ -1,6 +1,6 @@
 # KISS Anti-Patterns
 
-Smells to flag in reviews. Pair with `principles-table.md`, `code-patterns.md`, and (for package audits) `audit-coverage.md`.
+Smell catalog. Add a smell here, not in `SKILL.md`, the rule, or `kiss-reviewer`. Pair with `principles-table.md`, `code-patterns.md`, and (for package audits) `audit-coverage.md`. Apply a row only when its dimension is enabled.
 
 ## clarity — Clarity over cleverness
 

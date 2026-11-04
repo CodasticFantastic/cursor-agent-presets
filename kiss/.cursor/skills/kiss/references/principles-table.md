@@ -1,6 +1,8 @@
 # KISS Dimensions Checklist
 
-Working checklist for generation and review. Examples: TypeScript. Adapt syntax per language.
+Working source for what each dimension means, the pass/fail signals, and severity. The skill points here. Do not copy this table into `SKILL.md`, the rule, or `kiss-reviewer`.
+
+Level names, the fallback, and which dimensions are in scope live in `SKILL.md`. The section below only changes severity. Examples: TypeScript. Adapt syntax to the file. A new language does not need a second table.
 
 | Id | Name | Question to ask | Pass signal | Fail signal |
 |----|------|-----------------|-------------|-------------|
@@ -21,7 +23,7 @@ Working checklist for generation and review. Examples: TypeScript. Adapt syntax 
 
 ## Package audit reminder
 
-When scope is an app or package, also satisfy `audit-coverage.md` (layer sweep + minimum coverage gate). Pass/fail signals above apply **per file**; package health needs breadth, not only the worst module.
+When the scope is more than one file, or any package/app scope, also satisfy `audit-coverage.md` (layer sweep + minimum coverage gate). Pass/fail signals above apply **per file**; package health needs breadth, not only the worst module.
 
 ## Relationship to SOLID / YAGNI
 
@@ -33,8 +35,9 @@ When scope is an app or package, also satisfy `audit-coverage.md` (layer sweep +
 | Copy-paste of **identical** logic once | Prefer one helper (clarity) |
 | Copy-paste of **divergent** logic forced into one generic | Prefer two clear functions (clarity + yagni) |
 
-## Config interaction
+## Severity by level
 
-- Only audit dimensions listed in `kiss.config.json` → `dimensions`.
+Scope (which dimensions to audit) is owned by `SKILL.md`. This list only changes how hard a signal is filed.
+
 - At `pragmatic`, prefer Medium (or skip) for thin wrappers that clearly document a boundary the team already uses.
 - At `strict`, unjustified new abstractions, options, and deps in scope are High.
