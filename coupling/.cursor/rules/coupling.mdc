@@ -1,0 +1,20 @@
+---
+description: "Coupling — Law of Demeter and Tell, Don't Ask. Talk only to immediate friends; let the owner perform the decision. Defaults come from .cursor/skills/coupling/coupling.config.json."
+globs: "**/*.{ts,tsx,js,jsx,mjs,cjs,py,java,kt,cs,go}"
+alwaysApply: false
+---
+
+# Coupling Design Rules
+
+When generating or modifying application code, read `.cursor/skills/coupling/coupling.config.json` first. `level` is `pragmatic`, `strict`, or `educational`. `dimensions` is a list of `lod`, `tda`. Shipped default: pragmatic, both. A level or dimension set named in chat overrides the file for that request. If the file is missing or a value is invalid, use pragmatic and both.
+
+Apply only dimensions in the resolved `dimensions` list. Skip the others. `pragmatic` files real policy chains and external rules, and allows mapper or presenter reads. `strict` applies every enabled dimension. `educational` names each enabled dimension. Full level behavior is in the `coupling` skill. Once that skill is loaded, its filter wins.
+
+One reminder per dimension. Meaning, pass/fail, and severity live in `.cursor/skills/coupling/references/principles-table.md`. Do not restate that table here.
+
+- **lod** — Call methods on yourself, your fields, your parameters, and objects you create. Do not walk a returned stranger.
+- **tda** — Tell the object that owns the data to do the work. Do not ask for its fields and reimplement its rule outside.
+
+Never write that a package or project is "fully decoupled" or "LoD compliant". Do not add a method that only forwards. Do not file a missing port or a god class as coupling.
+
+Follow the `coupling` skill for the workflow, the scope filter, the evidence rules, and the patterns. Smells: `.cursor/skills/coupling/references/anti-patterns.md`. Shapes: `.cursor/skills/coupling/references/code-patterns.md`. Package sweep: `.cursor/skills/coupling/references/audit-coverage.md`. Add a new smell, layer, or shape in that reference, not in this rule. `/coupling-reviewer` is a separate readonly audit and it returns notes to the parent. Start it when the user asks for an audit or a parent explicitly delegates a review. Do not start it on your own after generating or editing code.

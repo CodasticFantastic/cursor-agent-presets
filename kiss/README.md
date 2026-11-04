@@ -107,10 +107,10 @@ chmod +x .cursor/hooks/kiss-reminder.sh
 
 ### Combining with other presets
 
-If you already use [`solid`](../solid) or [`wcag-2.2`](../wcag-2.2), merge the contents of each preset’s `.cursor/` folders (rules, skills, agents, and hooks when present) into one project `.cursor/`.
-`solid` and `wcag-2.2` do not ship a hook. Keep the KISS `hooks.json` as-is, or merge `afterFileEdit` arrays only if another preset also ships hooks.
+If you already use [`solid`](../solid), [`coupling`](../coupling), or [`wcag-2.2`](../wcag-2.2), merge the contents of each preset’s `.cursor/` folders (rules, skills, agents, and hooks when present) into one project `.cursor/`.
+`solid`, `coupling`, and `wcag-2.2` do not ship a hook. Keep the KISS `hooks.json` as-is, or merge `afterFileEdit` arrays only if another preset also ships hooks.
 
-KISS and SOLID complement each other: both reject unused ceremony. KISS does **not** excuse god modules or hard-wiring infrastructure into domain code.
+KISS and SOLID complement each other: both reject unused ceremony. KISS does **not** excuse god modules or hard-wiring infrastructure into domain code. A message chain is coupling, not a KISS nesting issue. Do **not** shorten it with a method that only forwards.
 
 ## How to use
 
