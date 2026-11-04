@@ -1,0 +1,25 @@
+---
+description: "KISS — Keep It Simple, Stupid. Prefer the simplest design that works. Defaults come from .cursor/skills/kiss/kiss.config.json."
+globs: "**/*.{ts,tsx,js,jsx,mjs,cjs,py,java,kt,cs,go}"
+alwaysApply: false
+---
+
+# KISS Design Rules
+
+When generating or modifying application code:
+
+- Read `.cursor/skills/kiss/kiss.config.json` first. `level` is `pragmatic`, `strict`, or `educational`. The shipped file is pragmatic with all six dimensions. A level or dimension set the user states in chat overrides the file for that request. If the file is missing or invalid, use pragmatic with all six.
+- Apply only the dimensions listed in `dimensions` (default: `clarity`, `yagni`, `abstraction`, `surface`, `deps`, `flow`). Chat can narrow the set for one request.
+- Prefer the simplest design that correctly solves the current requirement (clarity). Readable and boring beats clever.
+- Do not build speculative features, options, or branches for imagined futures (yagni).
+- Do not invent layers, factories, interfaces, or generic frameworks until a second real use case appears (abstraction). One concrete is fine until it hurts.
+- Keep public APIs, config knobs, and parameter lists small (surface). Delete dead code and unused flags.
+- Prefer standard library and existing project patterns over new dependencies (deps). Justify every new package.
+- Prefer shallow control flow, early returns, and straight-line paths over deep nesting and indirection (flow).
+- At `pragmatic` level: simplify where complexity creates real cost; keep structure that already reduces coupling or change risk. Do not “simplify” by inlining infrastructure into domain if that recreates a god module.
+- At `strict` level: challenge every new abstraction, option, dependency, and nested branch in scope — require a concrete justification.
+- At `educational` level: always name the KISS dimension and the trade-off in the explanation.
+- KISS complements SOLID: both reject unused ceremony. Do not use KISS as an excuse for a god class, hidden globals, or copy-paste of divergent logic.
+- For package/app audits: follow `.cursor/skills/kiss/references/audit-coverage.md` — sweep utils, services, config, API, and UI; do not stop after one “clever” helper.
+
+Refer to the `kiss` skill. Checklist: `.cursor/skills/kiss/references/principles-table.md`. Patterns: `.cursor/skills/kiss/references/code-patterns.md`. Anti-patterns: `.cursor/skills/kiss/references/anti-patterns.md`. Coverage gate: `.cursor/skills/kiss/references/audit-coverage.md`. For deep audits, delegate to the `kiss-reviewer` subagent.

@@ -15,7 +15,7 @@ This preset does not make a page conform to WCAG. The agent must not claim that 
 | **Config** | `.cursor/skills/wcag-2.2/wcag.config.json` | Default `standard` (`2.1` or `2.2`) and `level` (`A`, `AA`, or `AAA`). Read on every run. |
 | **Skill** | `.cursor/skills/wcag-2.2/` | Workflow, level filter, evidence rules, code patterns, and the success criteria tables. |
 | **Subagent** | `.cursor/agents/a11y-reviewer.md` | Readonly auditor. Runs when asked, keeps the review in its own context, and returns a report to the parent. |
-| **References** | `.cursor/skills/wcag-2.2/references/` | Criteria tables for 2.1 and 2.2, the version delta, new 2.2 criteria, and code patterns. Loaded on demand. |
+| **References** | `.cursor/skills/wcag-2.2/references/` | Criteria tables for 2.1 and 2.2, the version delta, new 2.2 criteria, code patterns, and app audit coverage. Loaded on demand. |
 
 ### Key reference files
 
@@ -24,6 +24,7 @@ This preset does not make a page conform to WCAG. The agent must not claim that 
 - `references/wcag-2.1-vs-2.2.md` — what 2.2 adds, what it removes, and how to report a migration
 - `references/new-criteria.md` — paraphrases of the 9 new WCAG 2.2 success criteria
 - `references/code-patterns.md` — HTML/CSS/JS patterns for the highest-impact criteria
+- `references/audit-coverage.md` — app / multi-route sweep and coverage gate, required on full-app audits
 - `wcag.config.json` — default standard and level
 
 Normative text: https://www.w3.org/TR/WCAG21/ and https://www.w3.org/TR/WCAG22/. The working copy for the agent is the markdown tables.

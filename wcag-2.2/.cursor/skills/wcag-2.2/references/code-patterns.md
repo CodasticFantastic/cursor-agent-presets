@@ -197,7 +197,45 @@ A skip link that is moved off-screen needs a visible `:focus` state. Hiding it w
 }
 ```
 
-## Form Labels & Autocomplete (1.3.5 AA, 3.3.2 A)
+On a multi-page app, put the same skip link and a matching `id` on every route in the set, or in a shared layout. A skip link on the home page does not satisfy 2.4.1 on the other routes.
+
+## Layout tables vs data tables (1.3.1, A)
+
+```html
+<!-- Layout only. Hide the table semantics. -->
+<table role="presentation">
+  <tr>
+    <td>Hours</td>
+    <td>09:00–17:00</td>
+  </tr>
+</table>
+
+<!-- Real data. Keep the table semantics and the headers. -->
+<table>
+  <caption>Order summary</caption>
+  <thead>
+    <tr><th scope="col">Item</th><th scope="col">Qty</th></tr>
+  </thead>
+  <tbody>...</tbody>
+</table>
+```
+
+A bare `<table>` used for columns needs `role="presentation"`. A data table keeps its semantics and its headers.
+
+## ARIA name references (4.1.2, A)
+
+```html
+<!-- Broken: the id does not exist, so the accessible name is wrong. -->
+<section aria-labelledby="missing-promo-label">...</section>
+
+<!-- The referenced id exists. -->
+<h2 id="promo-label">Spring sale</h2>
+<section aria-labelledby="promo-label">...</section>
+```
+
+Do not leave a focusable control (`a`, `button`, input, `tabIndex={0}`) inside `aria-hidden="true"`. Hide a subtree from assistive technology only when it is also removed from the tab order.
+
+## Form Labels and Autocomplete (1.3.5 AA, 3.3.2 A)
 
 ```html
 <label for="name">Full name</label>
