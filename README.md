@@ -21,7 +21,7 @@ Do **not** rename, move or flatten any folders — Cursor expects this precise s
 | ------------------------ | ---------------------------------------------------------------------------------------------------------------- | ---------------- |
 | [`wcag-2.2`](./wcag-2.2) | WCAG 2.1 / 2.2 accessibility aid (A/AA/AAA) with a rule, a skill, and a readonly review subagent                | Frontend / UI    |
 | [`solid`](./solid)       | SOLID design principles (pragmatic / strict / educational) with a rule, a skill, and a readonly review subagent | Application code |
-| [`kiss`](./kiss)         | KISS simplicity (clarity, YAGNI, delayed abstraction, small surfaces) with a rule, a skill, a subagent, and a hook | Application code |
+| [`kiss`](./kiss)         | KISS simplicity (clarity, YAGNI, delayed abstraction, small surfaces) with a rule, a skill, and a readonly review subagent | Application code |
 | [`coupling`](./coupling) | Law of Demeter and Tell, Don't Ask (pragmatic / strict / educational) with a rule, a skill, and a readonly review subagent | Application code |
 
 > More presets will be added over time (security, TDD, React patterns, etc.).
@@ -42,8 +42,6 @@ your-project/
 ```
 
 4. Restart Cursor (or reload the window).
-
-`kiss` ships a hook inside `.cursor/`. `solid`, `wcag-2.2`, and `coupling` do not. Copying the whole `.cursor/` folder keeps whichever layers that preset actually contains. Omitting `hooks.json` does not stop rules, skills, or agents from loading.
 
 **Example (correct):**
 
@@ -70,9 +68,8 @@ Cursor loads each layer from its own path. A preset does not need every layer.
 │   └── <skill-name>/
 │       ├── SKILL.md
 │       └── references/       # Optional supporting files
-├── agents/
-│   └── *.md                  # Subagents
-└── hooks.json                # Optional. Shipped with kiss, not with solid, wcag-2.2, or coupling
+└── agents/
+    └── *.md                  # Subagents
 ```
 
 | Layer    | Exact Location                   | Purpose                                  |
@@ -80,7 +77,6 @@ Cursor loads each layer from its own path. A preset does not need every layer.
 | Rules    | `.cursor/rules/*.mdc`            | Always-on or file-type constraints       |
 | Skill    | `.cursor/skills/<name>/SKILL.md` | On-demand detailed workflow + references |
 | Subagent | `.cursor/agents/*.md`            | Specialized reviewer with own context    |
-| Hooks    | `.cursor/hooks.json`             | Optional automation. Omit the file to skip it |
 
 If the path of a layer is wrong, Cursor will not load that layer. The other layers still load.
 

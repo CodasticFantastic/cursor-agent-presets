@@ -13,7 +13,6 @@ Change `level` to `strict` or `educational`, or narrow `dimensions`, in that fil
 | **Config** | `.cursor/skills/kiss/kiss.config.json` | Default `level`, `languages`, and `dimensions`. Read on every run. |
 | **Skill** | `.cursor/skills/kiss/` | The procedure: scope filter, evidence rules, and the report format. Catalogs stay in `references/`. |
 | **Subagent** | `.cursor/agents/kiss-reviewer.md` | Readonly auditor. Runs when asked, reads the skill, and returns a report to the parent. It does not keep its own template. |
-| **Hook** | `.cursor/hooks.json` + `hooks/kiss-reminder.sh` | After every source edit: logs a KISS reminder; runs ESLint complexity heuristics when available. |
 | **References** | `.cursor/skills/kiss/references/` | Working catalogs, loaded on demand. Each file owns one kind of change. |
 
 ### Key reference files
@@ -89,8 +88,7 @@ your-project/
 ├── .cursor/
 │   ├── rules/
 │   ├── skills/
-│   ├── agents/
-│   └── hooks/
+│   └── agents/
 ├── ... (your source code)
 ```
 
@@ -101,16 +99,9 @@ your-project/
 cp -r /path/to/kiss/.cursor ./
 ```
 
-On Unix, ensure the hook is executable:
-
-```bash
-chmod +x .cursor/hooks/kiss-reminder.sh
-```
-
 ### Combining with other presets
 
-If you already use [`solid`](../solid), [`coupling`](../coupling), or [`wcag-2.2`](../wcag-2.2), merge the contents of each preset’s `.cursor/` folders (rules, skills, agents, and hooks when present) into one project `.cursor/`.
-`solid`, `coupling`, and `wcag-2.2` do not ship a hook. Keep the KISS `hooks.json` as-is, or merge `afterFileEdit` arrays only if another preset also ships hooks.
+If you already use [`solid`](../solid), [`coupling`](../coupling), or [`wcag-2.2`](../wcag-2.2), merge the contents of each preset’s `.cursor/` folders (rules, skills, agents) into one project `.cursor/`.
 
 KISS and SOLID complement each other: both reject unused ceremony. KISS does **not** excuse god modules or hard-wiring infrastructure into domain code. A message chain is coupling, not a KISS nesting issue. Do **not** shorten it with a method that only forwards.
 
@@ -156,23 +147,6 @@ Audit this package at KISS strict level and list every unjustified abstraction.
 
 ```
 Explain each KISS dimension you apply while simplifying this class (educational).
-```
-
-## Hook behavior
-
-After every edit of a source file (`.ts`, `.tsx`, `.js`, `.py`, `.java`, …) the hook:
-
-1. Detects that the file is application source.
-2. Writes a KISS reminder to `.cursor/logs/hooks/kiss-YYYYMMDD.log`.
-3. If the project has ESLint, runs complexity / max-depth / max-params / max-lines-per-function heuristics on the changed file.
-4. Never blocks the agent (fail-open).
-
-Complexity warnings are **heuristics**, not a KISS verdict. Use `/kiss-reviewer` for a real simplicity assessment.
-
-To get the lint part, install ESLint in your project:
-
-```bash
-npm install --save-dev eslint
 ```
 
 ## Stronger automation (recommended for real projects)
