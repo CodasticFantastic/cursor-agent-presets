@@ -58,6 +58,8 @@ The agent reads `kiss.config.json` before it generates or reviews design-sensiti
 | `deps` | Justify every new package; prefer stdlib / existing stack |
 | `flow` | Shallow nesting, early returns, no pure-forward wrappers |
 
+False simplicity (god module, hidden globals, diverged copy-paste, infra in UI) is **not** a seventh dimension. Audits keep a six-dimension primary and add `Anti-pattern: false-simplicity` on that finding — see `SKILL.md`.
+
 ## How the layers relate
 
 The skill is the procedure. The parent agent and `kiss-reviewer` both read it. The skill does not call the subagent.

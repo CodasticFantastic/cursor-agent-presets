@@ -90,6 +90,8 @@ Flag these as **anti-KISS** even if the file count went down:
 - Deleting tests or types to “make it simpler”
 - Inlining SQL/HTTP/payment into UI for fewer files
 
+**How to file (audits):** not a seventh `dimensions` id. Primary dimension stays one of the six (usually `clarity`). Add the report line `Anti-pattern: false-simplicity` so the smell is named explicitly. See `SKILL.md` disambiguation item 5 and the report format.
+
 ## Review process smells (meta)
 
 Flag the **audit itself** as incomplete when:

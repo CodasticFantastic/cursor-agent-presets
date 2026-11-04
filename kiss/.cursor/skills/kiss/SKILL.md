@@ -108,7 +108,8 @@ Dimension disambiguation (before filing):
 1. Pick **one primary dimension** per symbol. Add a second only when it is a separate contract (or the catalog explicitly allows “also counts”).
 2. Speculative unused path / provider / flag → **yagni**. Unused export or options sprawl on an otherwise needed API → **surface**. Do not double-stamp both for the same dead knob.
 3. Premature interface/factory/plugin with one impl → **abstraction**. The same concrete hard-wired across layers is a SOLID/D concern, not a KISS fail by itself — and a real infra port is **not** abstraction theater.
-4. Clever names or nested control flow → **clarity** / **flow**. Collapsing domain + infra into one file to “keep it simple” is **false simplicity** (anti-KISS), not a clarity win.
+4. Clever names or nested control flow → **clarity** / **flow**.
+5. **False simplicity is not a seventh dimension** — do not add it to `dimensions` or invent a new id. When the smell is a god module, hidden globals/singletons, diverged copy-paste twins, or domain/infra inlined into UI “to keep fewer files”, pick the closest enabled primary (usually **clarity**) and **always** set `Anti-pattern: false-simplicity` on that finding. Omitting the label when the body is that smell is incomplete filing. Catalog: `references/anti-patterns.md` → “False simplicity”.
 
 Put each finding into one class:
 
@@ -134,10 +135,13 @@ Verdict: this is a simplicity assessment, not a certification.
 ### Violations visible in code
 - Location: path:line
 - Dimension: clarity | yagni | abstraction | surface | deps | flow — <name>
+- Anti-pattern: false-simplicity
 - Class: code
 - Severity: Critical | High | Medium
 - Why it fails:
 - Fix:
+
+When the finding is false simplicity (god module, hidden globals, diverged copy-paste, infra inlined into UI), include the `Anti-pattern: false-simplicity` line. For every other smell, omit that line entirely — do not invent other anti-pattern ids here.
 
 ### Satisfied checks
 - Dimension:

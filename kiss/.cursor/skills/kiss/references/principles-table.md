@@ -31,9 +31,10 @@ When the scope is more than one file, or any package/app scope, also satisfy `au
 |---------|----------|
 | Unused interface with one never-swapped impl | Flag under **abstraction** (and SOLID pragmatic “no ceremony”) |
 | Port that already isolates real infra churn | **Not** a KISS fail — keep it |
-| God class “to keep one file simple” | **Not** KISS — flag as false simplicity; split by change axis |
+| God class “to keep one file simple” | **Not** KISS — primary usually **clarity** + report `Anti-pattern: false-simplicity`; split by change axis |
 | Copy-paste of **identical** logic once | Prefer one helper (clarity) |
 | Copy-paste of **divergent** logic forced into one generic | Prefer two clear functions (clarity + yagni) |
+| Diverged near-duplicate twins / globals / SQL-in-UI “for fewer files” | Same filing as god class: closest primary + `Anti-pattern: false-simplicity` (see anti-patterns) |
 
 ## Severity by level
 

@@ -19,6 +19,6 @@ One reminder per dimension. Meaning, pass/fail, and severity live in `.cursor/sk
 - **deps** — Prefer the standard library and existing project stack. Every new dependency needs a reason.
 - **flow** — Prefer early returns and shallow nesting. Avoid unnecessary indirection (wrappers that only forward).
 
-Never write that a package or project is "fully KISS" or "KISS compliant". Do not use KISS as an excuse for a god module, hidden globals, or copy-paste of divergent logic.
+Never write that a package or project is "fully KISS" or "KISS compliant". Do not use KISS as an excuse for a god module, hidden globals, or copy-paste of divergent logic. When auditing those, keep a six-dimension primary and name `Anti-pattern: false-simplicity` (skill owns the format).
 
 Follow the `kiss` skill for the workflow, the scope filter, the evidence rules, and the patterns. Smells: `.cursor/skills/kiss/references/anti-patterns.md`. Shapes: `.cursor/skills/kiss/references/code-patterns.md`. Package sweep: `.cursor/skills/kiss/references/audit-coverage.md`. Add a new smell, layer, or shape in that reference, not in this rule. `/kiss-reviewer` is a separate readonly audit and it returns notes to the parent. Start it when the user asks for an audit or a parent explicitly delegates a review. Do not start it on your own after generating or editing code.
