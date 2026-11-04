@@ -23,8 +23,9 @@ Smell catalog. Add a smell here, not in `SKILL.md`, the rule, or `structure-revi
 | New function invented beside an existing one with the same control flow | Author skipped search | Reuse or extend the existing path |
 | Near-copy with renamed locals only | No real divergence | Delete the twin; call the original |
 | Parallel `switch` / status maps that must stay in sync | Shared change reason ignored | One table or one mapper used everywhere |
+| Outside twin of an owner method (same flow as `Type.method`, often beside a Tell-Don't-Ask smell) | Invariant drifts when only one copy is fixed | Delete the free function; call the owner (structure files **dry**; do not drop the twin because coupling also applies) |
 
-**Not dry:** accidental resemblance; two DTO maps; two handlers with different contracts; intentional duplication at an anti-corruption / bounded-context edge; a second implementation required by a different runtime (e.g. edge vs node) when abstraction would be worse.
+**Not dry:** accidental resemblance; two DTO maps; two handlers with different contracts; intentional duplication at an anti-corruption / bounded-context edge; a second implementation required by a different runtime (e.g. edge vs node) when abstraction would be worse; ask-then-decide or a train wreck that does **not** paste a twin body (coupling only).
 
 ## False positives (especially at `pragmatic`)
 
@@ -48,7 +49,8 @@ Flag the **audit itself** as incomplete when:
 - Only the longest function is cited and utils, services, API, and jobs were not opened
 - Lookalike mappers were filed as dry without a shared change reason
 - A speculative extract was recommended as a dry fix
-- A missing port, train wreck, or god class was filed as structure without mixed levels / twins
+- A missing port, train wreck without a twin body, or god class was filed as structure without mixed levels / twins
+- An owner-method near-copy was skipped as “only TDA” instead of filed as dry
 - One clean helper was treated as a package-wide pass
 - A High/Critical dry finding lists only one location (twins need multiple `path:line`)
 - "Not DRY enough" claims have no paths

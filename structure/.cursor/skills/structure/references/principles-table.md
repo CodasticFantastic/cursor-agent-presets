@@ -31,7 +31,8 @@ When the scope is more than one file, or any package/app scope, also satisfy `au
 | Missing port / `new Concrete` in policy | **Not** structure — SOLID **D** |
 | Speculative factory / unused options / extract for someday | **Not** dry — KISS **yagni** / **abstraction** / **surface** |
 | Nested `if`s that stay one abstraction level | **Not** slap — KISS **flow** |
-| Train wreck / ask-then-decide | **Not** structure — coupling **lod** / **tda** |
+| Train wreck / ask-then-decide **without** a near-copy body | **Not** structure — coupling **lod** / **tda** |
+| Free function pastes the same control flow as an owner method (`Type.method`) | **dry** — file the twin paths even when the same site is also TDA; coupling stays out of the structure report |
 | Two similar DTO maps or HTTP handlers with different contracts | **Not** a dry fail at `pragmatic` |
 | Shared util that is a junk drawer | Prefer SOLID **S** / KISS clarity; dry does not bless a fat `utils` dump |
 

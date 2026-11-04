@@ -16,7 +16,7 @@ Load with `anti-patterns.md` and `principles-table.md`. Report every hit with `p
 4. **Same smell, many layers.** If the same fee/tax/status policy appears in services **and** API **and** worker, file **each** location (or one finding that lists every path:line).
 5. **Search before declaring "no duplication".** For dry, ripgrep for sibling names (`*Fee`, `*Tax`, `calculate*`, `to*Dto`) and skim near matches. "I did not notice twins" is not a pass.
 6. **Do not recommend speculative extracts.** A dry fix needs existing twins with a shared change reason — not a future framework.
-7. **Do not import other presets' findings.** A missing port is not slap. A train wreck is not dry. Nested `if` clarity alone is KISS flow unless levels mix.
+7. **Do not import other presets' findings.** A missing port is not slap. A train wreck without a twin body is not dry. Nested `if` clarity alone is KISS flow unless levels mix. A free function that pastes an owner method's control flow **is** dry — file it; do not discard it as “only TDA”.
 8. **High/Critical dry needs ≥2 paths.** One location cannot prove duplication.
 
 ## Mandatory layer sweep

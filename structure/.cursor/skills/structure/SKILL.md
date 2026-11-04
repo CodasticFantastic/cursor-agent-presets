@@ -81,7 +81,7 @@ Judgment traps only. Concrete smells live in `references/anti-patterns.md`. Laye
 - Do not stop after the first long function or the first clean helper.
 - At `pragmatic`, two short similar DTO maps or two HTTP handlers with different contracts are not Critical — but twin domain policies with five near-copies still escalate.
 - Do not extract a shared module "for future variants". That is KISS **yagni**, not a structure win.
-- Do not file a missing port, a god class, a train wreck, or nested `if` clarity alone as structure. Those belong to SOLID, coupling, or KISS unless the cited lines are specifically mixed levels or justified duplication.
+- Do not file a missing port, a god class, a train wreck without a twin body, or nested `if` clarity alone as structure. Those belong to SOLID, coupling, or KISS unless the cited lines are specifically mixed levels or justified duplication. A free function that pastes an owner method's control flow is still **dry** — do not drop it because the same site is also Tell, Don't Ask.
 - Do not trust `Shared*`, `Common*`, `Base*`, or `Utils` names without reading whether the body is a real shared rule or a junk drawer.
 
 Always explain the structure rationale when generating or refactoring code. Name the dimension.
@@ -109,6 +109,7 @@ Dimension disambiguation (before filing):
 4. Speculative shared abstraction with one caller or unused options → KISS **yagni** / **abstraction** / **surface**, not dry. Do not stamp dry for "could be shared someday".
 5. A long function that is one level but does many jobs → prefer SOLID **S** if responsibilities diverge; slap only when levels mix.
 6. Same twin set is both mixed-level and duplicated: primary **dry** when the fix is one parameterized helper; **slap** also counts when each copy still mixes levels after merge.
+7. Ask-then-decide / train wreck **without** a pasted twin body → coupling, not structure. Free function that pastes `Type.method` control flow → **dry** (list both paths); mention coupling only as out-of-scope note, do not skip the dry finding.
 
 Put each finding into one class:
 
