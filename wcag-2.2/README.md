@@ -1,32 +1,32 @@
 # WCAG 2.2 Preset for Cursor
 
-Production-ready accessibility preset for Cursor IDE.
+Accessibility preset for Cursor IDE. It helps implement and review the standard and level in `wcag.config.json`. The shipped file is **WCAG 2.2 Level AA**.
 
-It enforces and helps implement the standard and level in `wcag.config.json`. The shipped file is **WCAG 2.2 Level AA**.  
-Change `standard` to `2.1` or `level` to `A` or `AAA` in that file. A request in chat overrides the file for that turn.  
+Change `standard` to `2.1` or `level` to `A` or `AAA` in that file. A request in chat overrides the file for that turn.
 The same preset can show what changes between 2.1 and 2.2.
+
+This preset does not make a page conform to WCAG. The agent must not claim that a page, component, or project "meets WCAG" or "passes AA". A passing check needs a source location or a named tool result. Lint, axe, and Lighthouse are evidence, not a conformance statement.
 
 ## What this preset includes
 
 | Layer | File / Folder | Purpose |
 |-------|---------------|---------|
-| **Rules** | `.cursor/rules/wcag-2.2.mdc` | Automatically applied on UI files. Forces good accessibility patterns while generating code. |
+| **Rules** | `.cursor/rules/wcag-2.2.mdc` | Applied on UI files. The level filter and the short requirements live here. |
 | **Config** | `.cursor/skills/wcag-2.2/wcag.config.json` | Default `standard` (`2.1` or `2.2`) and `level` (`A`, `AA`, or `AAA`). Read on every run. |
-| **Skill** | `.cursor/skills/wcag-2.2/` | On-demand full workflow, normative criteria, code patterns and the complete success criteria table. |
-| **Subagent** | `.cursor/agents/a11y-reviewer.md` | Specialized, independent accessibility auditor (readonly). |
-| **Hook** | `.cursor/hooks.json` + `hooks/a11y-reminder.sh` | After every UI file edit: detects the file and runs `eslint-plugin-jsx-a11y` when available. Logs results. |
+| **Skill** | `.cursor/skills/wcag-2.2/` | Workflow, level filter, evidence rules, code patterns, and the success criteria tables. |
+| **Subagent** | `.cursor/agents/a11y-reviewer.md` | Readonly auditor. Runs when asked, keeps the review in its own context, and returns a report to the parent. |
 | **References** | `.cursor/skills/wcag-2.2/references/` | Criteria tables for 2.1 and 2.2, the version delta, new 2.2 criteria, and code patterns. Loaded on demand. |
-| **Assets** | `.cursor/skills/wcag-2.2/assets/` | Official WCAG 2.1 and 2.2 PDFs. Fallback when a table is not enough. Cursor loads skill assets from this folder. |
 
 ### Key reference files
 
 - `references/wcag-2.2-success-criteria-table.md` — all 86 WCAG 2.2 criteria with A / AA / AAA columns
 - `references/wcag-2.1-success-criteria-table.md` — all 78 WCAG 2.1 criteria with A / AA / AAA columns
 - `references/wcag-2.1-vs-2.2.md` — what 2.2 adds, what it removes, and how to report a migration
-- `references/new-criteria.md` — normative text of the 9 new WCAG 2.2 success criteria
-- `references/code-patterns.md` — ready-to-use HTML/CSS/JS patterns for the highest-impact criteria
-- `assets/WCAG_2.1.pdf`, `assets/WCAG_2.2.pdf` — official recommendation PDFs
+- `references/new-criteria.md` — paraphrases of the 9 new WCAG 2.2 success criteria
+- `references/code-patterns.md` — HTML/CSS/JS patterns for the highest-impact criteria
 - `wcag.config.json` — default standard and level
+
+Normative text: https://www.w3.org/TR/WCAG21/ and https://www.w3.org/TR/WCAG22/. The working copy for the agent is the markdown tables.
 
 ```json
 {
@@ -37,11 +37,23 @@ The same preset can show what changes between 2.1 and 2.2.
 
 ## Conformance levels
 
-- **Level A** — minimum (only criteria marked in column A)
-- **Level AA** — shipped default (all A + AA). Recommended for almost all projects.
-- **Level AAA** — strictest (A + AA + AAA). Applied when `wcag.config.json` or the chat sets `level` to `AAA`.
+The rule and the skill apply only the column for the resolved level.
+
+- **Level A** — column A only
+- **Level AA** — columns A and AA. Shipped default. Recommended for almost all projects.
+- **Level AAA** — columns A, AA, and AAA
+
+A WCAG 2.2 bullet (2.4.11, 2.5.7, 2.5.8, 3.2.6, 3.3.7, 3.3.8, and the AAA criteria 2.4.12, 2.4.13, 3.3.9) applies only when the resolved standard is 2.2 and the resolved level includes that criterion.
 
 The agent reads `wcag.config.json` before it generates or reviews UI. Chat can override that file for one request.
+
+## How the layers relate
+
+The skill is the procedure. The parent agent and `a11y-reviewer` both read it. The skill does not call the subagent.
+
+- The **parent** writes code and can do a review in the same chat.
+- **`a11y-reviewer`** is for an audit in a separate context. It returns notes and does not edit. The parent decides the next task and applies fixes.
+- Do not expect the subagent to start on its own after every UI edit. Invoke it with `/a11y-reviewer` or an explicit review request.
 
 ## How to install
 
@@ -53,8 +65,7 @@ your-project/
 ├── .cursor/
 │   ├── rules/
 │   ├── skills/
-│   ├── agents/
-│   └── hooks/
+│   └── agents/
 ├── ... (your source code)
 ```
 
@@ -65,101 +76,108 @@ your-project/
 cp -r /path/to/wcag-2.2/.cursor ./
 ```
 
+This preset does not include a hook. Adding `hooks.json` later is optional and is not required for the rule, the skill, or the subagent to load.
+
 ## How to use
 
-### Automatic (recommended)
-Just write or generate UI code. The rules are applied automatically on HTML, JSX, TSX, Vue, Svelte and CSS files.
+### While writing
 
-### Manual / deeper review
-You can invoke the skill or subagent at any time:
+Write or generate UI code. The rule is applied on HTML, MDX, Astro, JSX, TSX, Vue, Svelte, CSS, and SCSS files. It tells the agent to follow the `wcag-2.2` skill.
+
+### Review in this chat
 
 ```
 /wcag-2.2
-/a11y-reviewer
 ```
 
-Or simply ask in chat:
-- “Review this component for WCAG 2.2 AA”
-- “Fix accessibility issues in this form”
-- “Make this modal fully keyboard accessible”
+Or ask in chat:
+
+- "Review this component against WCAG 2.2 AA and list what the source cannot prove."
+- "Fix the accessibility issues in this form."
+- "Make this modal keyboard accessible."
+
+### Review in a separate context
+
+```
+/a11y-reviewer Review the navigation and modal components for WCAG 2.2 AA issues.
+```
+
+The subagent returns a report. It does not change files. Ask the parent to apply the fixes.
 
 ### Example prompts
 
 **Generation**
+
 ```
-Create a accessible login form that supports password managers and meets WCAG 2.2 AA.
+Create an accessible login form that supports password managers. Target WCAG 2.2 AA. Do not claim the form conforms.
 ```
 
 **Audit**
+
 ```
 /a11y-reviewer Review the navigation and modal components for WCAG 2.2 AA issues.
 ```
 
 **Fix**
+
 ```
-The sticky header is covering focused elements. Fix it according to 2.4.11 and update the code.
+The sticky header is covering focused elements. Fix it according to 2.4.11. scroll-padding alone is not enough. Update the code.
 ```
 
-**Level AAA (explicit)**
+**Level A**
+
+```
+Use level A for this change. Apply only column A.
+```
+
+**Level AAA**
+
 ```
 Audit this page against WCAG 2.2 Level AAA and list the additional criteria that fail.
 ```
 
-## Hook behavior
+## Checks outside the agent
 
-After every edit of a UI file (`.tsx`, `.jsx`, `.vue`, `.html`, `.css` …) the hook:
+The preset does not run axe, Lighthouse, or a keyboard test. For a project, add those beside the preset:
 
-1. Detects that the file is UI-related.
-2. If the project has `eslint-plugin-jsx-a11y` installed, runs ESLint on the changed file.
-3. Writes a log to `.cursor/logs/hooks/a11y-YYYYMMDD.log`.
-4. Never blocks the agent (fail-open).
+1. **eslint-plugin-jsx-a11y** (React / JSX)
 
-This gives you automatic local feedback the moment the agent touches a component, without slowing down generation.
-
-To activate the lint part, install the plugin in your project:
-
-```bash
-npm install --save-dev eslint-plugin-jsx-a11y
-```
-
-## Stronger automation (recommended for real projects)
-
-This preset works great on its own, but for maximum reliability add automated tooling:
-
-1. **eslint-plugin-jsx-a11y** (for React/JSX projects)
    ```bash
    npm install --save-dev eslint-plugin-jsx-a11y
    ```
-   Then enable the recommended rules in your ESLint config. The agent will see the lint errors and fix them.
 
-2. **@axe-core/react** or **jest-axe** (component tests)
+   Enable the recommended rules in the project's ESLint config. The agent can read diagnostics the IDE surfaces. This preset does not shell out to ESLint.
+
+2. **@axe-core/react** or **jest-axe**
+
    ```bash
    npm install --save-dev @axe-core/react
    ```
-   Add accessibility assertions in your component tests so regressions are caught in CI.
 
-3. Optional: browser-based tools (axe DevTools, Lighthouse, keyboard-only testing).
+   Assert accessibility in component tests so regressions are caught in CI.
 
-These tools complement the Cursor preset — they catch issues the AI might miss and enforce the same standards in CI.
+3. Browser checks: axe DevTools, Lighthouse, and a keyboard-only pass.
 
-## What the agent knows by default
+These tools catch issues the model can miss. Their output still is not a WCAG conformance claim.
 
-- Prefer semantic HTML over ARIA
-- Visible focus indicators and no focus traps
-- Minimum target size 24×24 CSS px, with the spacing and inline exceptions (2.5.8, WCAG 2.2 only)
-- Focus must not be fully obscured by sticky elements (2.4.11, WCAG 2.2 only)
-- Single-pointer alternatives for dragging (2.5.7, WCAG 2.2 only)
-- Accessible authentication (password managers + paste) (3.3.8, WCAG 2.2 only)
-- No redundant data entry in multi-step flows (3.3.7, WCAG 2.2 only)
-- Consistent help location (3.2.6, WCAG 2.2 only)
-- Proper contrast, labels, `lang`, alt text, etc. (both versions)
-- 4.1.1 Parsing is in WCAG 2.1 and removed in WCAG 2.2
+## What the agent applies by default
+
+Shipped config is WCAG 2.2 AA, so column A and column AA are in scope. Column AAA is not, until `level` is `AAA`.
+
+- Semantic HTML before ARIA
+- Keyboard operation (2.1.1, A) and a visible focus indicator (2.4.7, AA)
+- Text contrast 4.5:1, and 3:1 for large text (18pt, or 14pt bold). UI states 3:1 (1.4.3 and 1.4.11, AA)
+- Labels, `lang`, and alt text
+- WCAG 2.2 AA additions: 24×24 CSS px targets with the spacing, equivalent, inline, user-agent, and essential exceptions (2.5.8); focus not entirely hidden by author-created content (2.4.11); a single-pointer alternative for dragging (2.5.7); authentication without an unsupported cognitive test (3.3.8); no forced re-entry (3.3.7, A); consistent help (3.2.6, A)
+- 4.1.1 Parsing is removed in WCAG 2.2. It stays in 2.1 and is not treated as a practical HTML failure
+
+At level AAA the agent also uses the AAA column, including 1.4.6, 2.5.5 (44×44), and, on WCAG 2.2, 2.4.12, 2.4.13, and 3.3.9.
 
 ## Source
 
-Based on the official W3C WCAG 2.1 and WCAG 2.2 Recommendations. Working tables are markdown. The PDFs in `assets/` are the fallback copies.
+Based on the W3C WCAG 2.1 and WCAG 2.2 Recommendations. The working tables are markdown. The recommendation URLs above are the normative source.
 
 ---
 
-Copy the `.cursor/` folder as-is.  
-The structure is required for Cursor to load the rules, skill and agent correctly.
+Copy the `.cursor/` folder as-is.
+The structure is required for Cursor to load the rule, the skill, and the subagent.

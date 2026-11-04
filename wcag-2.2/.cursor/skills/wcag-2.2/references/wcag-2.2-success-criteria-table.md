@@ -69,7 +69,7 @@ When auditing, always check the column that matches the requested level (default
 | **2.4.8** | Location | | | ✔️ | Information about location in site |
 | **2.4.9** | Link Purpose (Link Only) | | | ✔️ | Purpose clear from link text alone |
 | **2.4.10** | Section Headings | | | ✔️ | Sections have headings |
-| **2.4.11** | Focus Not Obscured (Minimum) **[NEW]** | | ✔️ | | Focused component not entirely hidden (sticky header/footer) |
+| **2.4.11** | Focus Not Obscured (Minimum) **[NEW]** | | ✔️ | | Focused component not entirely hidden by author-created content |
 | **2.4.12** | Focus Not Obscured (Enhanced) **[NEW]** | | | ✔️ | No part of focused component hidden |
 | **2.4.13** | Focus Appearance **[NEW]** | | | ✔️ | Focus indicator min. 2px + 3:1 contrast |
 | **2.5.1** | Pointer Gestures | ✔️ | | | Single-pointer alternative for complex gestures |
@@ -108,5 +108,4 @@ When auditing, always check the column that matches the requested level (default
 
 ---
 
-**Source:** Official WCAG 2.2 Recommendation (W3C REC 12 December 2024, https://www.w3.org/TR/WCAG22/).  
-Fallback PDF: `assets/WCAG_2.2.pdf`. Open it only when this table does not answer the question. Do not load the whole PDF into context.
+**Source:** Official WCAG 2.2 Recommendation (W3C REC 12 December 2024, https://www.w3.org/TR/WCAG22/). Open that URL for a criterion this table does not answer. Do not load a PDF into context.

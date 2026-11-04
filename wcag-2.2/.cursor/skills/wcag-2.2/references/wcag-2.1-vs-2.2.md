@@ -12,7 +12,6 @@ WCAG 2.2 is backwards-compatible with 2.1. Every 2.1 criterion except 4.1.1 is s
 | Level AAA (all) | 78 | 86 |
 | Table | `references/wcag-2.1-success-criteria-table.md` | `references/wcag-2.2-success-criteria-table.md` |
 | Normative URL | https://www.w3.org/TR/WCAG21/ | https://www.w3.org/TR/WCAG22/ |
-| Fallback PDF | `assets/WCAG_2.1.pdf` | `assets/WCAG_2.2.pdf` |
 
 ## Removed in 2.2
 

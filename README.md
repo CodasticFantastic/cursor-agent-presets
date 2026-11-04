@@ -1,9 +1,9 @@
 # Agent Presets
 
-Reusable, production-ready AI agent configurations for [Cursor](https://cursor.com).
+Reusable AI agent configurations for [Cursor](https://cursor.com).
 
-**Important:** Each preset is a ready-to-use `.cursor/` folder.  
-You **must copy the entire `.cursor/` directory exactly as-is** into the root of your project.  
+**Important:** Each preset is a ready-to-use `.cursor/` folder.
+You **must copy the entire `.cursor/` directory exactly as-is** into the root of your project.
 Do **not** rename, move or flatten any folders — Cursor expects this precise structure.
 
 ## Table of Contents
@@ -17,9 +17,9 @@ Do **not** rename, move or flatten any folders — Cursor expects this precise s
 
 ## Available Presets
 
-| Preset                   | Description                                                                                 | Target        |
-| ------------------------ | ------------------------------------------------------------------------------------------- | ------------- |
-| [`wcag-2.2`](./wcag-2.2) | Full WCAG 2.2 accessibility implementation (A/AA/AAA) with rules, skill, subagent and hooks | Frontend / UI |
+| Preset                   | Description                                                                                      | Target        |
+| ------------------------ | ------------------------------------------------------------------------------------------------ | ------------- |
+| [`wcag-2.2`](./wcag-2.2) | WCAG 2.1 / 2.2 accessibility aid (A/AA/AAA) with a rule, a skill, and a readonly review subagent | Frontend / UI |
 
 > More presets will be added over time (security, TDD, React patterns, etc.).
 
@@ -34,12 +34,13 @@ your-project/
 ├── .cursor/
 │   ├── rules/
 │   ├── skills/
-│   ├── agents/
-│   └── hooks/
+│   └── agents/
 ├── ... (your source code)
 ```
 
 4. Restart Cursor (or reload the window).
+
+The `wcag-2.2` preset does not ship a hook. Cursor can load `hooks.json` in the same `.cursor/` folder when a future preset adds one. Omitting hooks does not stop rules, skills, or agents from loading.
 
 **Example (correct):**
 
@@ -55,7 +56,7 @@ cp -r /path/to/agent-presets/wcag-2.2/.cursor ./
 
 ## Required Cursor Structure
 
-Cursor only recognizes the following exact layout:
+Cursor loads each layer from its own path. A preset does not need every layer.
 
 ```
 .cursor/
@@ -67,7 +68,7 @@ Cursor only recognizes the following exact layout:
 │       └── references/       # Optional supporting files
 ├── agents/
 │   └── *.md                  # Subagents
-└── hooks.json                # + optional hooks/ scripts
+└── hooks.json                # Optional. Not part of the wcag-2.2 preset
 ```
 
 | Layer    | Exact Location                   | Purpose                                  |
@@ -75,9 +76,9 @@ Cursor only recognizes the following exact layout:
 | Rules    | `.cursor/rules/*.mdc`            | Always-on or file-type constraints       |
 | Skill    | `.cursor/skills/<name>/SKILL.md` | On-demand detailed workflow + references |
 | Subagent | `.cursor/agents/*.md`            | Specialized reviewer with own context    |
-| Hooks    | `.cursor/hooks.json`             | Lightweight automation after edits       |
+| Hooks    | `.cursor/hooks.json`             | Optional automation. Omit the file to skip it |
 
-If this structure is broken, Cursor will **not** load the rules, skills or agents.
+If the path of a layer is wrong, Cursor will not load that layer. The other layers still load.
 
 ## Contributing
 

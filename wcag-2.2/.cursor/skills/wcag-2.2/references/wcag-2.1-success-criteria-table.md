@@ -98,5 +98,4 @@ When auditing, always check the column that matches the requested level (default
 
 ---
 
-**Source:** Official WCAG 2.1 Recommendation (https://www.w3.org/TR/WCAG21/).  
-Fallback PDF: `assets/WCAG_2.1.pdf`. Open it only when this table does not answer the question. Do not load the whole PDF into context.
+**Source:** Official WCAG 2.1 Recommendation (https://www.w3.org/TR/WCAG21/). Open that URL for a criterion this table does not answer. Do not load a PDF into context.
