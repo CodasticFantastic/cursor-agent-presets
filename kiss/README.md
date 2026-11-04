@@ -101,9 +101,9 @@ cp -r /path/to/kiss/.cursor ./
 
 ### Combining with other presets
 
-If you already use [`solid`](../solid), [`coupling`](../coupling), or [`wcag-2.2`](../wcag-2.2), merge the contents of each preset’s `.cursor/` folders (rules, skills, agents) into one project `.cursor/`.
+If you already use [`solid`](../solid), [`coupling`](../coupling), [`structure`](../structure), or [`wcag-2.2`](../wcag-2.2), merge the contents of each preset’s `.cursor/` folders (rules, skills, agents) into one project `.cursor/`.
 
-KISS and SOLID complement each other: both reject unused ceremony. KISS does **not** excuse god modules or hard-wiring infrastructure into domain code. A message chain is coupling, not a KISS nesting issue. Do **not** shorten it with a method that only forwards.
+KISS and SOLID complement each other: both reject unused ceremony. KISS does **not** excuse god modules or hard-wiring infrastructure into domain code. A message chain is coupling, not a KISS nesting issue. Do **not** shorten it with a method that only forwards. Speculative shared modules are KISS **yagni**, not a structure DRY win.
 
 ## How to use
 

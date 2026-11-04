@@ -23,6 +23,7 @@ Do **not** rename, move or flatten any folders — Cursor expects this precise s
 | [`solid`](./solid)       | SOLID design principles (pragmatic / strict / educational) with a rule, a skill, and a readonly review subagent | Application code |
 | [`kiss`](./kiss)         | KISS simplicity (clarity, YAGNI, delayed abstraction, small surfaces) with a rule, a skill, and a readonly review subagent | Application code |
 | [`coupling`](./coupling) | Law of Demeter and Tell, Don't Ask (pragmatic / strict / educational) with a rule, a skill, and a readonly review subagent | Application code |
+| [`structure`](./structure) | SLAP and guarded DRY (search before invent; pragmatic / strict / educational) with a rule, a skill, and a readonly review subagent | Application code |
 
 > More presets will be added over time (security, TDD, React patterns, etc.).
 

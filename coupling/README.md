@@ -99,10 +99,10 @@ This preset does not include a hook. Adding `hooks.json` later is optional and i
 
 ### Combining with other presets
 
-If you already use [`solid`](../solid), [`kiss`](../kiss), or [`wcag-2.2`](../wcag-2.2), merge the contents of each preset’s `.cursor/` folders (rules, skills, agents, and hooks when present) into one project `.cursor/`.
+If you already use [`solid`](../solid), [`kiss`](../kiss), [`structure`](../structure), or [`wcag-2.2`](../wcag-2.2), merge the contents of each preset’s `.cursor/` folders (rules, skills, agents, and hooks when present) into one project `.cursor/`.
 Only `kiss` ships a hook. Keep that `hooks.json` as-is when merging.
 
-Coupling complements SOLID and KISS. A missing port is SOLID. A god module is SOLID. Nested control flow is KISS. Do **not** “fix” a chain with a method that only forwards.
+Coupling complements SOLID, KISS, and structure. A missing port is SOLID. A god module is SOLID. Nested control flow is KISS. Mixed levels or near-duplicates are structure. Do **not** “fix” a chain with a method that only forwards.
 
 ## How to use
 

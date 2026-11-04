@@ -1,0 +1,20 @@
+---
+description: "Structure — SLAP and guarded DRY. One abstraction level per function; search before inventing a near-copy. Defaults come from .cursor/skills/structure/structure.config.json."
+globs: "**/*.{ts,tsx,js,jsx,mjs,cjs,py,java,kt,cs,go}"
+alwaysApply: false
+---
+
+# Structure Design Rules
+
+When generating or modifying application code, read `.cursor/skills/structure/structure.config.json` first. `level` is `pragmatic`, `strict`, or `educational`. `dimensions` is a list of `slap`, `dry`. Shipped default: pragmatic, both. A level or dimension set named in chat overrides the file for that request. If the file is missing or a value is invalid, use pragmatic and both.
+
+Apply only dimensions in the resolved `dimensions` list. Skip the others. `pragmatic` files mixed-level policy+plumbing and justified near-duplicates. `strict` applies every enabled dimension. `educational` names each enabled dimension. Full level behavior is in the `structure` skill. Once that skill is loaded, its filter wins.
+
+One reminder per dimension. Meaning, pass/fail, and severity live in `.cursor/skills/structure/references/principles-table.md`. Do not restate that table here.
+
+- **slap** — Keep statements in one function at the same level of abstraction. Orchestrate with named steps; do not mix high-level policy with low-level I/O in the same body.
+- **dry** — Before adding a new helper or path, search the repo for an existing implementation of the same behavior. Prefer extending or parameterizing it over a near-copy when copies share a change reason. Do not extract on resemblance alone. Do not aim for "as DRY as possible".
+
+Never write that a package or project is "fully SLAP", "maximally DRY", or "as DRY as possible". Do not invent a speculative shared module. Do not file a missing port, a train wreck, or YAGNI theater as structure.
+
+Follow the `structure` skill for the workflow, the scope filter, the evidence rules, and the patterns. Smells: `.cursor/skills/structure/references/anti-patterns.md`. Shapes: `.cursor/skills/structure/references/code-patterns.md`. Package sweep: `.cursor/skills/structure/references/audit-coverage.md`. Add a new smell, layer, or shape in that reference, not in this rule. `/structure-reviewer` is a separate readonly audit and it returns notes to the parent. Start it when the user asks for an audit or a parent explicitly delegates a review. Do not start it on your own after generating or editing code.
