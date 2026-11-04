@@ -83,6 +83,7 @@ Judgment traps only. Concrete smells live in `references/anti-patterns.md`. Laye
 
 - Do not claim a package or project is "fully KISS" or "KISS compliant".
 - Do not stop after the first over-engineered helper or the first clean util.
+- At `pragmatic`, a thin wrapper that documents a team boundary is not Critical by itself — but unused options, speculative factories, or nesting that obscures the requirement still escalate.
 - Do not “simplify” by merging domain and infrastructure into a god module, deleting tests, or copy-pasting divergent logic.
 - Do not trust `Simple*`, `Lite*`, `Basic*`, `Factory`, `Manager`, or `Framework` names without reading the body.
 
@@ -96,11 +97,18 @@ A source review is a KISS simplicity assessment. It is not a proof that the prod
 
 Evidence rules:
 
-- Status `pass` only with evidence: a repository location `path:line`, or a structural property visible in the scoped files. With no such evidence the status is `needs verification`.
+- Status `pass` only with evidence: a repository location `path:line`, or a structural property named with the file that shows it. With no such evidence the status is `needs verification`.
 - One clean function does not close the dimension for the package. Record the scope of the evidence.
 - On a package or app review, a pass on one file does not close the dimension for the package. File the same smell at every in-scope layer where it appears, or mark that layer absent.
 - Do not invent “simplicity” by deleting necessary boundaries. Prefer the smallest change that removes unjustified complexity.
 - Discuss dimensions that are in the resolved `dimensions` list. A dimension outside that list is out of scope, not a pass.
+
+Dimension disambiguation (before filing):
+
+1. Pick **one primary dimension** per symbol. Add a second only when it is a separate contract (or the catalog explicitly allows “also counts”).
+2. Speculative unused path / provider / flag → **yagni**. Unused export or options sprawl on an otherwise needed API → **surface**. Do not double-stamp both for the same dead knob.
+3. Premature interface/factory/plugin with one impl → **abstraction**. The same concrete hard-wired across layers is a SOLID/D concern, not a KISS fail by itself — and a real infra port is **not** abstraction theater.
+4. Clever names or nested control flow → **clarity** / **flow**. Collapsing domain + infra into one file to “keep it simple” is **false simplicity** (anti-KISS), not a clarity win.
 
 Put each finding into one class:
 
@@ -144,5 +152,5 @@ Verdict: this is a simplicity assessment, not a certification.
 - What is missing: no path:line, or product or roadmap judgment outside scope
 ```
 
-If a section has no items, write "None in this scope." Do not invent a pass. A check without `path:line` goes under "Needs verification".
-For a single file, `### Coverage` may say `n/a — file-scoped`. For a package or app review, an incomplete gate means keep searching. Do not close the report on the largest over-engineered type alone.
+If a section has no items, write "None in this scope." Do not invent a pass. A pass needs `path:line`, or a structural property named with the file that shows it. Otherwise the check goes under "Needs verification".
+For a single file, `### Coverage` may say `n/a — file-scoped`. Whenever `audit-coverage.md` was loaded, include `### Coverage`. An incomplete gate means keep searching. Do not close the report on the largest over-engineered type alone.

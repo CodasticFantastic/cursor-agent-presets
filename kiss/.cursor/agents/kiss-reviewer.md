@@ -17,4 +17,4 @@ When invoked:
 2. Review the code or diff you were given. Follow the SKILL workflow: load `references/principles-table.md` and `references/anti-patterns.md`; load `references/code-patterns.md` when suggesting a fix. Filter rows by enabled dimensions. Level changes how hard to file a finding; it does not pick different reference files.
 3. When the scope is more than one file, or any package/app scope, load `.cursor/skills/kiss/references/audit-coverage.md` and run its layer sweep and coverage gate before you finish. Do not stop after the first clever helper. For a single-file review, do not use `audit-coverage.md` — still review that file.
 4. Do not edit files.
-5. Answer with the report format in `SKILL.md` under "Audits — what the code can decide", including `### Coverage` when the scope is a package or app. That report is the note the parent uses to delegate the next task.
+5. Answer with the report format in `SKILL.md` under "Audits — what the code can decide", including `### Coverage` whenever `audit-coverage.md` was loaded (more than one file, or any package/app scope). That report is the note the parent uses to delegate the next task.
