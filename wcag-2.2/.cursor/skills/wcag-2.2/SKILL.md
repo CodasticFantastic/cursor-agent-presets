@@ -32,14 +32,15 @@ The parent agent implements fixes in its own context. `/a11y-reviewer` is a sepa
 2. **Apply principles** — Follow POUR: Perceivable, Operable, Understandable, Robust. Prefer semantic HTML over ARIA.
 3. **Check the whole column** — Load the table for the resolved standard and cover every criterion required at the resolved level. WCAG 2.2: `references/wcag-2.2-success-criteria-table.md`. WCAG 2.1: `references/wcag-2.1-success-criteria-table.md`. For a migration, report only the delta in `references/wcag-2.1-vs-2.2.md`: added criteria that fall inside the resolved level, and that 4.1.1 no longer applies on the way to 2.2. The six new A/AA criteria (2.4.11, 2.5.7, 2.5.8, 3.2.6, 3.3.7, 3.3.8) are that migration delta. They do not replace the rest of the column. Load `references/new-criteria.md` when one of the nine new criteria is in scope.
 4. **Implement with patterns** — Use `references/code-patterns.md`. A 2.2-only pattern applies only when the standard is 2.2 and that criterion's level is included.
-5. **App / multi-route reviews** — When the scope is more than a single component, load `references/audit-coverage.md` and run its route/layer sweep and coverage gate before finishing. Do not stop after the first broken widget. A pass on one route does not close the criterion for the app. File failures on in-scope routes outside the evidence. Skip this step for a single component.
-6. **Test guidance** — Recommend keyboard-only testing, screen reader spot-checks, contrast tools, and axe-core / Lighthouse where applicable. Tool output is evidence for the report. It is not a conformance claim.
-7. **Cite criteria** — When reporting issues or justifying code, reference the exact Success Criterion number and level (for example, "2.5.8 Target Size (Minimum) AA"). Cite only criteria in scope.
-8. **Do not claim conformance** — Classify every finding as code, hybrid, or manual. A `pass` needs evidence. Use the report format below. Never state that a page, component, or project meets WCAG.
+5. **App / multi-route reviews** — When the scope is more than one component, or any app / multi-page / multi-route review, load `references/audit-coverage.md` and run its route/layer sweep and coverage gate before finishing. That file owns the trigger and the sweep. Do not stop after the first broken widget. A pass on one route does not close the criterion for the app. File failures on in-scope routes outside the evidence. For a single-component review, do not use `audit-coverage.md` — still review that component.
+6. **Apply judgment traps** — Load `references/judgment-traps.md` on every audit (component or app). Before filing 2.4.1, 2.5.8, 3.2.3, 3.2.6, 3.3.7, 3.3.8, or similar decoy-prone criteria, check that table. Do not fail landmarks-only pages for a missing skip link; do not fail help/nav subsets that keep relative order.
+7. **Test guidance** — Recommend keyboard-only testing, screen reader spot-checks, contrast tools, and axe-core / Lighthouse where applicable. Tool output is evidence for the report. It is not a conformance claim.
+8. **Cite criteria** — When reporting issues or justifying code, reference the exact Success Criterion number and level (for example, "2.5.8 Target Size (Minimum) AA"). Cite only criteria in scope.
+9. **Do not claim conformance** — Classify every finding as code, hybrid, or manual. A `pass` needs evidence. Use the report format below. Never state that a page, component, or project meets WCAG.
 
 ## Key Rules
 
-Each bullet names its level. Skip it when the resolved level is lower, and skip a 2.2-only bullet when the standard is 2.1.
+Each bullet names its level. Skip it when the resolved level is lower, and skip a 2.2-only bullet when the standard is 2.1. The tables and `references/new-criteria.md` are the definition. These lines are the generation reminder.
 
 Both versions:
 
@@ -55,7 +56,9 @@ WCAG 2.2 only:
 - Dragging is 2.5.7, Level AA: provide a single-pointer alternative unless dragging is essential.
 - Accessible authentication is 3.3.8, Level AA: a cognitive function test (remembering a password, a puzzle, a CAPTCHA) needs an alternative, a mechanism, object recognition, or personal content the user provided. Password managers and paste are a mechanism for the password step. Allowing paste does not pass a puzzle step that has no alternative.
 - Redundant entry is 3.3.7, Level A. Do not force re-entry of data already provided in the same process.
-- Consistent help is 3.2.6, Level A.
+- Consistent help is 3.2.6, Level A: same **relative order** of help mechanisms that appear on multiple pages. A page may offer a subset; omission alone is not a failure.
+- Consistent navigation is 3.2.3, Level AA: same **relative order** of repeated navigational components. Omitting an item while keeping the rest in order is not a failure.
+- Bypass blocks is 2.4.1, Level A: repeated blocks need a bypass (skip link **or** landmarks / equivalent). Missing skip while `nav`+`main` exist is not an automatic failure — see `judgment-traps.md` and `audit-coverage.md`.
 - 4.1.1 Parsing is removed in WCAG 2.2. Do not enforce it.
 - AAA only: 2.4.12 (no part of the focused component is hidden), 2.4.13 (focus indicator area and contrast between focused and unfocused pixels), 3.3.9 (stricter authentication).
 
@@ -68,6 +71,23 @@ Both versions, AAA only:
 
 - 2.5.5 Target Size (Enhanced): 44×44 CSS px. Do not apply it at A or AA. 2.5.8 (24×24, WCAG 2.2) is the AA target-size criterion.
 
+## Where a change goes
+
+Edit the catalog that owns the change. Do not paste the same body into this procedure, the rule, and the subagent.
+
+| Change | Edit |
+|--------|------|
+| Default standard or level | `wcag.config.json` |
+| Full criteria column for a standard | `references/wcag-2.2-success-criteria-table.md` or `references/wcag-2.1-success-criteria-table.md` |
+| 2.1 ↔ 2.2 migration delta | `references/wcag-2.1-vs-2.2.md` |
+| Detail on a new 2.2 criterion | `references/new-criteria.md` |
+| An HTML/CSS/JS pattern | `references/code-patterns.md` |
+| A route/layer hunt or coverage checkbox | `references/audit-coverage.md` |
+| A false-positive / exception trap | `references/judgment-traps.md` |
+| Evidence rules or the report format | This file, in "Audits — what the code can decide" |
+
+A new smell, route hunt, or pattern does not belong in the rule. The rule may keep short generation reminders. The subagent reads this file and does not keep a second template.
+
 ## When to Load References
 
 - Defaults, every run → `wcag.config.json`
@@ -77,31 +97,19 @@ Both versions, AAA only:
 - One of the nine new 2.2 criteria → `references/new-criteria.md`
 - HTML/CSS/JS patterns → `references/code-patterns.md`
 - App or multi-route audit → `references/audit-coverage.md`
+- Every audit (false-positive guard) → `references/judgment-traps.md`
 - A gap in the tables → the matching criterion at https://www.w3.org/TR/WCAG21/ or https://www.w3.org/TR/WCAG22/
 
 ## Common Failures to Avoid
 
-Only when the criterion is in scope.
+Short reminders only. The decoy catalog is `references/judgment-traps.md`. Concrete failures live in the criteria tables, `references/new-criteria.md`, `references/code-patterns.md`, and `references/audit-coverage.md`.
 
-WCAG 2.2:
-
-- Author-created content, including a sticky bar or overlay, that entirely hides the focused component (2.4.11). `scroll-padding` alone does not close this.
-- Pointer targets under 24×24 CSS px with no spacing, equivalent, inline, user-agent, or essential exception (2.5.8). Inline text links are exempt.
-- Drag-only interactions with no single-pointer alternative, when dragging is not essential (2.5.7).
-- An authentication step that is a cognitive test and has none of the 3.3.8 exceptions. Blocking paste fails the password step. A CAPTCHA or puzzle with no alternative fails even when paste is allowed.
-- Multi-step flows that force re-entry of data already provided (3.3.7).
-- Help in a different relative place on one page than on the rest of the set (3.2.6).
-
-Both versions, when the criterion is in scope:
-
-- Focus style removed with no visible replacement (2.4.7, AA).
-- A focus indicator that identifies a state and has less than 3:1 against the adjacent color (1.4.11, AA). The AAA area and focused/unfocused pixel test is 2.4.13. Do not require 2.4.13 at AA.
-- A skip link that is positioned off-screen and has no visible `:focus` state, a skip link on only some routes in the same set, or `href="#main"` with no matching `id` on that page (2.4.1, A).
-- `aria-labelledby` or `aria-describedby` pointing at a missing id (4.1.2, A).
-- A focusable element inside `aria-hidden="true"` (4.1.2, A).
-- A layout `<table>` without `role="presentation"`, or a data table without headers (1.3.1, A).
-- A positive `tabIndex` that breaks DOM order (2.4.3, A).
-- Treating `alt=""` on a decorative image as proof that an informative image may have an empty alt (1.1.1, A).
+- Do not claim a page, component, or project "meets WCAG", "passes AA", or is "fully accessible".
+- Do not stop after the first broken widget or the first clean route.
+- Lint, axe, and Lighthouse output is evidence for the report. It is not a conformance claim.
+- Do not treat `alt=""` on a decorative image as proof that an informative image may have an empty alt.
+- Do not fail a missing skip link when landmarks already bypass repeated blocks (2.4.1).
+- Do not park author hex contrast, CSS reflow locks, or fixed-chrome overlap in `needs verification` when the values are in source — file as **code**.
 
 Always explain the accessibility rationale when generating or fixing code. State the criterion and its level.
 
@@ -121,9 +129,9 @@ Evidence rules:
 
 Put each criterion you discuss into one class:
 
-- **Code** — the source alone shows a failure or a satisfied check. Examples: `html` without `lang` (3.1.1); an `img` with no `alt` attribute (1.1.1); a form control with no label, `aria-label`, or `aria-labelledby` (1.3.1, 3.3.2, 4.1.2); a button or link with no accessible name (2.4.4, 4.1.2); `outline: none` or `outline: 0` with no replacement `:focus-visible` style (2.4.7, AA); a click handler on a non-interactive element with no keyboard operation (2.1.1); a drag-only control in the same component with no single-pointer alternative (2.5.7, WCAG 2.2 AA); `aria-labelledby` or `aria-describedby` targeting a missing id (4.1.2); focusable content inside `aria-hidden="true"` (4.1.2); a layout `<table>` without `role="presentation"` (1.3.1); a skip link missing on a route in the same set as pages that have one, or a skip target id missing (2.4.1).
-- **Hybrid** — the source shows a risk, and pass or fail needs the rendered page, computed style, or more than this snippet. Examples: contrast (1.4.3, 1.4.11); target size and its exceptions (2.5.8); focus hidden under author-created content (2.4.11); whether an existing focus style is visible (2.4.7); heading order across the page (1.3.1); link purpose in context (2.4.4); help in the same place on every page (3.2.6); redundant entry across steps that are not all in view (3.3.7). Whether `alt=""` is correct is hybrid when the image purpose is unclear.
-- **Manual** — the source cannot settle it. Examples: screen reader announcement and reading order; a full keyboard walk, including traps that appear only at runtime (2.1.2); whether dragging is essential (2.5.7 exception); accuracy of captions or transcripts (1.2.x); an authentication alternative that is outside this component (3.3.8); flashing content (2.3.1); reflow and 200% zoom (1.4.4, 1.4.10).
+- **Code** — the source alone shows a failure or a satisfied check. Examples: `html` without `lang` (3.1.1); an `img` with no `alt` attribute (1.1.1); a form control with no label, `aria-label`, or `aria-labelledby` (1.3.1, 3.3.2, 4.1.2); a button or link with no accessible name (2.4.4, 4.1.2); `outline: none` or `outline: 0` with no replacement `:focus-visible` style (2.4.7, AA); a click handler on a non-interactive element with no keyboard operation (2.1.1); a drag-only control in the same component with no single-pointer alternative (2.5.7, WCAG 2.2 AA); `aria-labelledby` or `aria-describedby` targeting a missing id (4.1.2); focusable content inside `aria-hidden="true"` (4.1.2); a layout `<table>` without `role="presentation"` (1.3.1); repeated blocks with **no** bypass mechanism — no skip, no landmarks, no heading bypass (2.4.1); author hex text/UI colors below 1.4.3 / 1.4.11 thresholds; author `min-width` / `nowrap` / spacing `!important` locks for 1.4.4 / 1.4.10 / 1.4.12; fixed chrome whose CSS box fully covers another control (2.4.11); flash rate recorded in a media manifest (2.3.1); `onMouseDown`-only destructive/pay actions (2.5.2).
+- **Hybrid** — the source shows a risk, and pass or fail needs the rendered page, computed style, or more than this snippet. Examples: target size when spacing/equivalent needs measurement (2.5.8); whether a custom focus ring is *perceptibly* visible despite some style (2.4.7); heading structure across a large page (1.3.1); link purpose in context (2.4.4); help relative order across pages not all in view (3.2.6); redundant entry across steps that are not all in view (3.3.7). Whether `alt=""` is correct is hybrid when the image purpose is unclear. Do **not** use hybrid to defer contrast when both foreground and background hex (or tokens resolvable in source) are present — that is **code**.
+- **Manual** — the source cannot settle it. Examples: screen reader announcement and reading order; a full keyboard walk, including traps that appear only at runtime (2.1.2); whether dragging is essential (2.5.7 exception); accuracy of spoken captions or transcripts vs the real media binary; an authentication alternative that lives entirely outside this repository (3.3.8). A flash **rate in source** is code; judging a binary with no record is manual.
 
 ### Report format
 

@@ -11,21 +11,25 @@ This preset does not make a page conform to WCAG. The agent must not claim that 
 
 | Layer | File / Folder | Purpose |
 |-------|---------------|---------|
-| **Rules** | `.cursor/rules/wcag-2.2.mdc` | Applied on UI files. The level filter and the short requirements live here. |
+| **Rules** | `.cursor/rules/wcag-2.2.mdc` | Applied on UI files. Short reminders only. The skill owns the procedure. |
 | **Config** | `.cursor/skills/wcag-2.2/wcag.config.json` | Default `standard` (`2.1` or `2.2`) and `level` (`A`, `AA`, or `AAA`). Read on every run. |
-| **Skill** | `.cursor/skills/wcag-2.2/` | Workflow, level filter, evidence rules, code patterns, and the success criteria tables. |
-| **Subagent** | `.cursor/agents/a11y-reviewer.md` | Readonly auditor. Runs when asked, keeps the review in its own context, and returns a report to the parent. |
-| **References** | `.cursor/skills/wcag-2.2/references/` | Criteria tables for 2.1 and 2.2, the version delta, new 2.2 criteria, code patterns, and app audit coverage. Loaded on demand. |
+| **Skill** | `.cursor/skills/wcag-2.2/` | The procedure: level filter, evidence rules, and the report format. Catalogs stay in `references/`. |
+| **Subagent** | `.cursor/agents/a11y-reviewer.md` | Readonly auditor. Runs when asked, reads the skill, and returns a report to the parent. It does not keep its own template. |
+| **References** | `.cursor/skills/wcag-2.2/references/` | Working catalogs, loaded on demand. Each file owns one kind of change. |
 
 ### Key reference files
+
+Each catalog has one owner. A new criterion detail, pattern, or route hunt goes in that file. It does not get pasted into the rule or the subagent.
 
 - `references/wcag-2.2-success-criteria-table.md` — all 86 WCAG 2.2 criteria with A / AA / AAA columns
 - `references/wcag-2.1-success-criteria-table.md` — all 78 WCAG 2.1 criteria with A / AA / AAA columns
 - `references/wcag-2.1-vs-2.2.md` — what 2.2 adds, what it removes, and how to report a migration
 - `references/new-criteria.md` — paraphrases of the 9 new WCAG 2.2 success criteria
 - `references/code-patterns.md` — HTML/CSS/JS patterns for the highest-impact criteria
-- `references/audit-coverage.md` — app / multi-route sweep and coverage gate, required on full-app audits
+- `references/audit-coverage.md` — the only copy of the app / multi-route layer sweep and coverage gate
+- `references/judgment-traps.md` — false-positive / exception traps (load on every audit)
 - `wcag.config.json` — default standard and level
+- `SKILL.md` — the only copy of the level filter, the evidence rules, and the report format
 
 Normative text: https://www.w3.org/TR/WCAG21/ and https://www.w3.org/TR/WCAG22/. The working copy for the agent is the markdown tables.
 
@@ -48,6 +52,8 @@ A WCAG 2.2 bullet (2.4.11, 2.5.7, 2.5.8, 3.2.6, 3.3.7, 3.3.8, and the AAA criter
 
 The agent reads `wcag.config.json` before it generates or reviews UI. Chat can override that file for one request.
 
+Rule `globs` attach reminders when matching UI files are edited. Skill `paths` scopes auto-surfacing of the skill for the same extensions. `/wcag-2.2` and `/a11y-reviewer` still work when invoked explicitly.
+
 ## How the layers relate
 
 The skill is the procedure. The parent agent and `a11y-reviewer` both read it. The skill does not call the subagent.
@@ -55,6 +61,18 @@ The skill is the procedure. The parent agent and `a11y-reviewer` both read it. T
 - The **parent** writes code and can do a review in the same chat.
 - **`a11y-reviewer`** is for an audit in a separate context. It returns notes and does not edit. The parent decides the next task and applies fixes.
 - Do not expect the subagent to start on its own after every UI edit. Invoke it with `/a11y-reviewer` or an explicit review request.
+
+When the guidance changes, edit the owner and leave the procedure alone:
+
+| Change | Edit |
+|--------|------|
+| Defaults | `wcag.config.json` |
+| Criteria column or migration delta | the matching table / `wcag-2.1-vs-2.2.md` |
+| New 2.2 criterion detail | `references/new-criteria.md` |
+| A code pattern | `references/code-patterns.md` |
+| A route hunt or coverage check | `references/audit-coverage.md` |
+| A false-positive / exception trap | `references/judgment-traps.md` |
+| The workflow, the filter, or the report | `SKILL.md` |
 
 ## How to install
 

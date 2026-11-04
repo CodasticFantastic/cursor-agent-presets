@@ -8,21 +8,16 @@ alwaysApply: false
 
 When generating or modifying frontend code, read `.cursor/skills/wcag-2.2/wcag.config.json` first. `standard` is `2.1` or `2.2`. `level` is `A`, `AA`, or `AAA`. Shipped default: WCAG 2.2 AA. A standard or level named in chat overrides the file for that request. If the file is missing or invalid, use WCAG 2.2 AA.
 
-Apply only criteria in scope:
+Apply only criteria in scope for the resolved standard and level. Level A = column A only. Level AA = columns A and AA. Level AAA = all three. Skip the nine 2.2-only criteria when the standard is 2.1. Do not enforce 4.1.1 when the standard is 2.2. Full filter and criterion detail live in the `wcag-2.2` skill and the success-criteria tables. Once that skill is loaded, its filter wins.
 
-- Level A = column A only. Level AA = columns A and AA. Level AAA = columns A, AA, and AAA.
-- Standard 2.1: skip 2.4.11, 2.4.12, 2.4.13, 2.5.7, 2.5.8, 3.2.6, 3.3.7, 3.3.8, and 3.3.9. 4.1.1 is in 2.1; do not file it as a practical HTML failure.
-- Standard 2.2: do not enforce 4.1.1.
+Short reminders only. Do not restate the tables here.
+
+- Prefer semantic HTML. ARIA only when no native element fits.
+- Keyboard operation: 2.1.1, A. Visible focus: 2.4.7, AA.
+- Text contrast 1.4.3 AA; non-text UI contrast 1.4.11 AA. Labels, `lang`, appropriate `alt`: A.
+- WCAG 2.2 AA additions when in scope: 2.4.11, 2.5.7, 2.5.8, 3.2.6, 3.3.7, 3.3.8. Details in the skill and `references/new-criteria.md`.
+- AAA only when level is AAA (including 2.5.5, and on 2.2 also 2.4.12, 2.4.13, 3.3.9).
 
 Never write that a page, component, or project is "WCAG compliant", "meets AA", "passes", or is "fully accessible".
 
-A bullet applies only when that criterion is in scope for the resolved standard and level.
-
-- Semantic HTML first. ARIA only when no native element fits.
-- Keyboard operation: 2.1.1, A. Visible focus: 2.4.7, AA, using `:focus-visible`. A removed `outline` needs a visible replacement.
-- Text contrast: 1.4.3, AA. 4.5:1 for normal text, 3:1 for large text (18pt, or 14pt and bold). UI states and meaningful graphics: 1.4.11, AA, 3:1 against the adjacent color. AAA only: text contrast 7:1 / 4.5:1 (1.4.6) and focus appearance (2.4.13).
-- Page `lang`, control labels, appropriate `alt`: 3.1.1, 3.3.2, 1.1.1, all A.
-- WCAG 2.2 only: 3.2.6 A, help stays in the same relative order. 3.3.7 A, do not force re-entry of data already provided in the same process. 2.4.11 AA, the focused component is not entirely hidden by author-created content. `scroll-padding` on the scroll container applies when the browser scrolls focus into view; size it from the real sticky-bar thickness. Put `scroll-margin` on the focused control, not on `main`. That CSS does not by itself satisfy 2.4.11. 2.5.7 AA, a single-pointer alternative for dragging unless dragging is essential. 2.5.8 AA, pointer target at least 24×24 CSS px unless a spacing, equivalent, inline, user-agent, or essential exception applies. A link in a sentence is the inline exception. 3.3.8 AA, a cognitive test (remembering a password, a puzzle, a CAPTCHA) needs an alternative, a mechanism, object recognition, or personal content the user provided. Password managers and paste are a mechanism for the password step. A puzzle with no alternative still fails.
-- AAA only: 2.5.5 is 44×44 CSS px in both versions. WCAG 2.2 also adds 2.4.12 (no part of the focus is hidden) and 3.3.9 (stricter authentication).
-
-Tables: `.cursor/skills/wcag-2.2/references/wcag-2.2-success-criteria-table.md` and `wcag-2.1-success-criteria-table.md`. Delta: `wcag-2.1-vs-2.2.md`. Follow the `wcag-2.2` skill for the workflow, evidence rules, and patterns. `/a11y-reviewer` is a separate readonly audit and it returns notes to the parent. Start it when the user asks for an audit or a parent explicitly delegates a review. Do not start it on your own after generating or editing UI.
+Follow the `wcag-2.2` skill for the workflow, evidence rules, and patterns. Tables: `.cursor/skills/wcag-2.2/references/wcag-2.2-success-criteria-table.md` and `wcag-2.1-success-criteria-table.md`. Delta: `wcag-2.1-vs-2.2.md`. Patterns: `references/code-patterns.md`. App sweep: `references/audit-coverage.md`. Decoys/exceptions: `references/judgment-traps.md`. Add a new criterion detail, pattern, hunt, or trap in that reference, not in this rule. `/a11y-reviewer` is a separate readonly audit and it returns notes to the parent. Start it when the user asks for an audit or a parent explicitly delegates a review. Do not start it on your own after generating or editing UI.
