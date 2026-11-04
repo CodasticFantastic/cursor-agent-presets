@@ -16,7 +16,7 @@ Load with the success-criteria table for the resolved standard, `code-patterns.m
 4. **Same smell, many routes.** If help *relative order*, titles, bypass mechanisms, focus utilities, or unlabeled search differ by page, file **each** route (or one finding that lists every `path:line`).
 5. **Scoped pass ⇒ check the complement.** When you mark a criterion `pass` with evidence on N pages, list the in-scope pages **without** that pattern. Missing ones are failures (or explicit “not applicable”), not silent omissions.
 6. **Do not claim conformance.** Counts and evidence only.
-7. **Do not invent failures from decoys.** Before filing 2.4.1, 2.5.8, 3.2.3, 3.2.6, 3.3.8, or similar, apply `judgment-traps.md`.
+7. **Do not invent failures from decoys.** Before filing 2.4.1, 2.4.4/2.4.9 vs 2.5.3, 2.4.8, 1.3.4, 1.4.6-vs-1.4.3, tiny-blink as 2.2.2/2.3.1, 2.5.8, 3.2.3, 3.2.6, 3.3.8, or similar, apply `judgment-traps.md`.
 
 ## Mandatory route / layer sweep
 
@@ -104,10 +104,11 @@ Help mechanisms: human contact details, human contact mechanism, self-help, auto
 - Informative SVG / chart without a text alternative (name alone like `"Chart"` is not enough when values are not elsewhere).
 - Character CAPTCHA image without a non-visual alternative (also 3.3.8).
 
-### 1.4.3 / 1.4.11 Contrast (when hex/roles are in source)
+### 1.4.3 / 1.4.6 / 1.4.11 Contrast (when hex/roles are in source)
 
 - Author hex pairs for normal/large text and UI borders/icons that compute below threshold — file as **code** with the ratio, not only “needs verification”.
 - Disabled controls are exempt.
+- **Level split:** pairs that fail AA → file **1.4.3** (and 1.4.11 for non-text). Do **not** replace that with **1.4.6**. At AAA, file **1.4.6** only for pairs that already pass AA but miss 7:1 / 4.5:1 large.
 
 ### 1.4.4 / 1.4.10 Resize & Reflow (when CSS locks are in source)
 
@@ -118,10 +119,20 @@ Help mechanisms: human contact details, human contact mechanism, self-help, auto
 
 - `<img>` (or background graphic) whose essential content is text that could be real text (marketing banner, “Download” glyph as the only name), unless logotype / essential / incidental.
 
+### 1.3.4 Orientation (AA)
+
+- Author portrait/landscape rules that **hide** primary reading UI in one orientation.
+- **Do not** auto-fail a tool/map that documents an essential orientation — see `judgment-traps.md`.
+
 ### 1.4.12 / 1.4.13
 
 - Author `!important` locks on line-height / spacing that defeat user text-spacing.
 - Hover-only subnav or tips that are not dismissible, hoverable, and persistent (or focus-triggered).
+
+### 2.4.8 Location (AAA)
+
+- Views with **no** location mechanism: no breadcrumb, no site-map link in chrome, and no `aria-current` / equivalent current-page cue (e.g. service detail with `current={null}`).
+- **Do not** fail every page that merely omits breadcrumbs when `aria-current` (or equivalent) already marks location — see `judgment-traps.md`.
 
 ### 2.4.11 Focus Not Obscured (AA, WCAG 2.2)
 
@@ -133,9 +144,9 @@ Help mechanisms: human contact details, human contact mechanism, self-help, auto
 
 ### Forms, auth, status
 
-- Placeholder-only inputs; crossed `htmlFor` / `id` (1.3.1 / 4.1.2 — visible label still present means 3.3.2 may pass); visible label vs `aria-label` mismatch (2.5.3).
+- Placeholder-only inputs; crossed `htmlFor` / `id` (1.3.1 / 4.1.2 — visible label still present means 3.3.2 may pass); visible label vs `aria-label` / `aria-labelledby` mismatch (**2.5.3** — not 2.4.4 / 2.4.9 when the accessible name already states purpose).
 - Status text injected into the DOM without `role="status"` / `aria-live` and without moving focus to it (4.1.3).
-- Financial / data-deletion submits with no review, confirm, or undo (3.3.4 AA).
+- Financial / data-deletion submits with no review, confirm, or undo (3.3.4 AA). At AAA, also hunt ordinary submits without check/confirm/undo (**3.3.6**).
 - Confirm-email empty while email already entered in the same process (3.3.7) — password confirm may be a security exception; email confirm usually is not.
 
 ### Media manifests / players
@@ -143,6 +154,7 @@ Help mechanisms: human contact details, human contact mechanism, self-help, auto
 - Autoplay audio >3s without controls (1.4.2); looping/moving media >5s without pause (2.2.2).
 - Missing captions / AD / transcript fields vs kind of media.
 - Flash rate recorded in source (`flashes.perSecond` etc.) above the 2.3.1 general threshold — treat the record as evidence.
+- Tiny CSS status lamps / blink dots: do **not** file as 2.2.2 or as 2.3.1 when area is under the general flash threshold; at AAA file **2.3.2** if flashing.
 
 ## Minimum coverage gate (app audit)
 
@@ -155,7 +167,7 @@ Before finishing an app / multi-route review, confirm you can answer **yes** or 
 - [ ] ARIA idrefs: at least one search for `aria-labelledby` / `aria-describedby` vs existing ids
 - [ ] Layout tables: hunt `<table>` without data headers / without `role="presentation"`
 - [ ] CSS contrast / reflow / fixed-chrome hunts run when utilities exist in tree
-- [ ] Judgment traps applied before filing 2.4.1 / 2.5.8 / 3.2.3 / 3.2.6 / 3.3.8 decoys
+- [ ] Judgment traps applied before filing 2.4.1 / 2.4.4·2.4.9 vs 2.5.3 / 2.4.8 / 1.3.4 / 1.4.6-vs-1.4.3 / 2.2.2·2.3.1 blink / 2.5.8 / 3.2.3 / 3.2.6 / 3.3.8 decoys
 - [ ] Scoped-pass complement: no criterion left as pass-only-on-N without stating other routes
 
 If any checkbox is unchecked without a written reason (“folder missing” / “searched, none”), the audit is incomplete — keep searching.

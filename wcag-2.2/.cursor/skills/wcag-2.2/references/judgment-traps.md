@@ -14,8 +14,11 @@ Normative detail stays in the W3C Understanding docs. These lines stop decoy fil
 | `outline: none` on unfocused rule with a strong `:focus` / `:focus-visible` replacement | 2.4.7 | Fail only when focus has no visible indicator (e.g. outline removed and background shift ≈ 1:1) |
 | Disabled control low contrast | 1.4.3 / 1.4.11 | Exempt when truly `disabled` / `aria-disabled` and not the only path |
 | Placeholder color the author did not set | 1.4.3 | Ignore UA placeholder chrome unless authored |
+| Pair already fails **1.4.3** AA (e.g. ≈4.48:1 normal, ≈2.8:1 large, button text ≪4.5:1) | **1.4.6** *instead of* or *as a substitute for* 1.4.3 | File **1.4.3** for the AA fail. File **1.4.6** only for pairs that **pass AA** but miss AAA (e.g. ≈5.7:1 normal, ≈3.5:1 large) |
 | Link purpose clear from the **same sentence/paragraph** (“…click here”, “…Begin”) | 2.4.4 A | At AAA, 2.4.9 may still fail link-text-alone |
-| `aria-labelledby` giving a clear name while visible text differs | 2.4.4 alone | Often a **2.5.3** Label in Name failure instead |
+| `aria-labelledby` (or equivalent) giving a clear purpose name while visible text differs (“Read more” → “Harbor fee schedule”) | **2.4.4** and **2.4.9** | Purpose is satisfied by the accessible name. File **2.5.3** Label in Name when the visible label text is not in that name |
+| Orientation lock on a view where a particular orientation is **essential** (e.g. scale tool, map) | **1.3.4** | Essential exception; still fail orientation locks that hide ordinary reading UI (directory body, etc.) |
+| Page already exposes location via `aria-current` / clear current nav (and/or a site map in the set) | **2.4.8** for “missing breadcrumbs” alone | Do not mass-fail every Shell page. File 2.4.8 when the view has **no** location mechanism (e.g. `current={null}` and no breadcrumb / you-are-here) |
 | Redundant `role="navigation"` on `<nav>` | 4.1.2 | Harmless |
 | Layout `<table role="presentation">` | 1.3.1 | Correct pattern for layout tables |
 | Data table with captions/`th` | 1.3.1 | Pass |
@@ -81,8 +84,8 @@ Normative detail stays in the W3C Understanding docs. These lines stop decoy fil
 | Decorative muted looping video >5s without pause | — | **Does** fail 2.2.2 (not 1.2.1) |
 | Prerecorded sync media missing captions | 1.2.1 | Use 1.2.2+ |
 | Full text alternative present | 1.2.5 | Satisfies 1.2.3 A, **not** 1.2.5 AA |
-| Tiny CSS blink below general flash area threshold | 2.3.1 | May still fail AAA 2.3.2; check area for A |
-| Author flash rate in a media manifest / technical record | “cannot know without binary” | Treat the record as evidence for 2.3.1 |
+| Tiny CSS blink / status lamp below general flash area threshold | **2.3.1** and **2.2.2** | Not 2.3.1 when area is far under the general flash threshold; not 2.2.2 for a small decorative blink. At AAA, file **2.3.2** if it flashes at all (no area exception) |
+| Author flash rate in a media manifest / technical record | “cannot know without binary” | Treat the record as evidence for 2.3.1 (and 2.3.2 at AAA) |
 
 ## Language
 
