@@ -6,19 +6,18 @@ alwaysApply: false
 
 # SOLID Design Rules
 
-When generating or modifying application code:
+When generating or modifying application code, read `.cursor/skills/solid/solid.config.json` first. `level` is `pragmatic`, `strict`, or `educational`. `paradigm` is `oop` or `functional`. `principles` is a list of `S`, `O`, `L`, `I`, `D`. Shipped default: pragmatic OOP, all five. A level, paradigm, or principle set named in chat overrides the file for that request. If the file is missing or a value is invalid, use pragmatic OOP and all five.
 
-- Read `.cursor/skills/solid/solid.config.json` first. `level` is `pragmatic`, `strict`, or `educational`. `paradigm` is `oop` or `functional`. The shipped file is pragmatic OOP. A level or paradigm the user states in chat overrides the file for that request. If the file is missing or invalid, use pragmatic OOP.
-- Apply only the principles listed in `principles` (default: all five). Chat can narrow the set for one request.
-- Prefer small modules with one reason to change (S). Split “and” responsibilities — including utils that smuggle UI, HTTP, email, or payments.
-- Extend behavior with new types/modules, not by editing closed cores (O). Prefer composition and strategy over growing `if/switch` chains on type — watch for **scattered** switches (tax, flags, geo, factories, routers, API actions, UI modes, DI tokens, plugin allowlists).
-- Subtypes must honor the base contract — no stronger preconditions, no weaker postconditions, no surprise exceptions (L). Prefer composition when inheritance would break substitutability. Check pages/layouts/routes/**workers** that construct risky subtypes; watch template-method step skips, conditional identity on effectful bases, and sibling subtypes after one OK type.
-- Prefer small, role-focused interfaces over fat ones; clients should not depend on methods they never use (I).
-- Depend on abstractions (ports/interfaces), not concrete implementations; inject collaborators at the boundary (D). Avoid concrete↔concrete cycles, `new Gateway()` inside UI, and DIP theater (type-alias “ports”, fake `create*Port`, Container→`new`).
-- At `pragmatic` level: apply SOLID where it reduces coupling or change risk; do not invent layers, interfaces, or factories with a single unused implementation. Still escalate when the same concrete is constructed across many layers.
-- At `strict` level: enforce all enabled principles on every new type and public API in scope.
-- At `educational` level: always name the principle (S/O/L/I/D) and the trade-off in the explanation.
-- For `functional` paradigm: map S→single-purpose functions/modules, O→extension via higher-order functions, L→lawful substitution of compatible function types, I→narrow function signatures / focused modules, D→inject dependencies as parameters or context.
-- For package/app audits: follow `.cursor/skills/solid/references/audit-coverage.md` — sweep utils, validators, store/hooks, API, components, pages, **and peripherals** (workers/BFF/bus/config); do not stop after one god class; do not trust Strategy/Factory/Repository/Facade/Container/Port names alone.
+Apply only letters in the resolved `principles` list. Skip the others. `pragmatic` avoids an unused abstraction. `strict` applies every enabled letter. `educational` names each enabled letter. Full level behavior is in the `solid` skill. Once that skill is loaded, its filter wins.
 
-Refer to the `solid` skill. Principles table: `.cursor/skills/solid/references/principles-table.md`. Patterns: `.cursor/skills/solid/references/code-patterns.md`. Anti-patterns: `.cursor/skills/solid/references/anti-patterns.md`. Coverage gate: `.cursor/skills/solid/references/audit-coverage.md`. For deep audits, delegate to the `solid-reviewer` subagent.
+One reminder per letter. Meaning, pass/fail, severity, and the paradigm mapping live in `.cursor/skills/solid/references/principles-table.md`. Do not restate that table here.
+
+- **S** — one reason to change. Split persistence, transport, and domain policy when they change for different reasons.
+- **O** — add behavior with new types or strategies, not by editing a closed decision core. Prefer polymorphism or composition over a growing type switch.
+- **L** — a subtype must be usable wherever the base is expected. Prefer composition when inheritance would lie.
+- **I** — callers depend only on what they use.
+- **D** — high-level policy depends on abstractions. Inject concrete adapters at the edge.
+
+Never write that a package or project is "fully SOLID" or "SOLID compliant".
+
+Follow the `solid` skill for the workflow, the scope filter, the evidence rules, and the patterns. Smells: `.cursor/skills/solid/references/anti-patterns.md`. Shapes: `.cursor/skills/solid/references/code-patterns.md`. Package sweep: `.cursor/skills/solid/references/audit-coverage.md`. Add a new smell, layer, or shape in that reference, not in this rule. `/solid-reviewer` is a separate readonly audit and it returns notes to the parent. Start it when the user asks for an audit or a parent explicitly delegates a review. Do not start it on your own after generating or editing code.

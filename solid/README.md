@@ -10,20 +10,22 @@ Narrow `principles` to a subset (e.g. `["S","D"]`) when you want a focused audit
 
 | Layer | File / Folder | Purpose |
 |-------|---------------|---------|
-| **Rules** | `.cursor/rules/solid.mdc` | Automatically applied on source files. Forces SOLID-aware generation. |
+| **Rules** | `.cursor/rules/solid.mdc` | Applied on source files. Short reminders only. The skill owns the procedure. |
 | **Config** | `.cursor/skills/solid/solid.config.json` | Default `level`, `paradigm`, `languages`, and `principles`. Read on every run. |
-| **Skill** | `.cursor/skills/solid/` | On-demand full workflow, principle checklist, patterns and anti-patterns. |
-| **Subagent** | `.cursor/agents/solid-reviewer.md` | Specialized, independent SOLID auditor (readonly). |
-| **Hook** | `.cursor/hooks.json` + `hooks/solid-reminder.sh` | After every source edit: logs a SOLID reminder; runs ESLint complexity heuristics when available. |
-| **References** | `.cursor/skills/solid/references/` | Principles table, code patterns, anti-patterns. Loaded on demand. |
+| **Skill** | `.cursor/skills/solid/` | The procedure: scope filter, evidence rules, and the report format. Catalogs stay in `references/`. |
+| **Subagent** | `.cursor/agents/solid-reviewer.md` | Readonly auditor. Runs when asked, reads the skill, and returns a report to the parent. It does not keep its own template. |
+| **References** | `.cursor/skills/solid/references/` | Working catalogs, loaded on demand. Each file owns one kind of change. |
 
 ### Key reference files
 
-- `references/principles-table.md` — checklist for S / O / L / I / D with pass/fail signals
-- `references/code-patterns.md` — ready-to-use TypeScript (and functional) patterns
-- `references/anti-patterns.md` — smells, fixes, and pragmatic false positives
-- `references/audit-coverage.md` — **mandatory layer sweep** for package/app audits (utils, pages, workers/BFF/bus/config, name theater, scattered OCP, LSP call sites, DIP cycles/theater)
-- `solid.config.json` — default level, paradigm, and enabled principles
+Each catalog has one owner. A new smell, layer, or code shape goes in that file. It does not get pasted into the rule or the subagent.
+
+- `references/principles-table.md` — working source for S / O / L / I / D: meaning, pass/fail, severity, and the functional mapping
+- `references/code-patterns.md` — implementation shapes (TypeScript examples; adapt the syntax)
+- `references/anti-patterns.md` — smell catalog
+- `references/audit-coverage.md` — the only copy of the package/app layer sweep and coverage gate
+- `solid.config.json` — default level, paradigm, example languages, and enabled principles
+- `SKILL.md` — the only copy of the scope filter, the evidence rules, and the report format
 
 ```json
 {
@@ -36,11 +38,34 @@ Narrow `principles` to a subset (e.g. `["S","D"]`) when you want a focused audit
 
 ## Levels
 
-- **pragmatic** — shipped default. Apply SOLID where it reduces real coupling or change risk. Avoid unused interfaces and ceremony.
-- **strict** — enforce enabled principles on every new public type and cross-boundary collaborator in scope.
-- **educational** — same technical bar as pragmatic, plus an explicit S/O/L/I/D rationale on material choices.
+Aligned with the level table in `SKILL.md`:
+
+- **pragmatic** — shipped default. Apply an enabled letter where change risk or coupling is real. One implementation may stay concrete until a second is needed.
+- **strict** — ports for every cross-boundary collaborator in scope. No fat interface. No type-switch growth in a closed module. Every enabled letter applies.
+- **educational** — same technical bar as pragmatic, plus an explicit rationale for each enabled letter on every material design choice.
 
 The agent reads `solid.config.json` before it generates or reviews design-sensitive code. Chat can override that file for one request.
+
+`languages` picks example syntax only. Rule `globs` attach reminders when matching files are edited. Skill `paths` scopes auto-surfacing of the skill for the same extensions. `/solid` and `/solid-reviewer` still work when invoked explicitly.
+
+## How the layers relate
+
+The skill is the procedure. The parent agent and `solid-reviewer` both read it. The skill does not call the subagent.
+
+- The **parent** writes code and can do a review in the same chat.
+- **`solid-reviewer`** is for an audit in a separate context. It returns notes and does not edit. The parent decides the next task and applies fixes.
+- Do not expect the subagent to start on its own after every edit. Invoke it with `/solid-reviewer` or an explicit review request.
+
+When the guidance changes, edit the owner and leave the procedure alone:
+
+| Change | Edit |
+|--------|------|
+| Defaults | `solid.config.json` |
+| What a letter means, or the functional mapping | `references/principles-table.md` |
+| A smell | `references/anti-patterns.md` |
+| A code shape | `references/code-patterns.md` |
+| A layer or a coverage check | `references/audit-coverage.md` |
+| The workflow, the filter, or the report | `SKILL.md` |
 
 ## How to install
 
@@ -52,8 +77,7 @@ your-project/
 ├── .cursor/
 │   ├── rules/
 │   ├── skills/
-│   ├── agents/
-│   └── hooks/
+│   └── agents/
 ├── ... (your source code)
 ```
 
@@ -64,11 +88,7 @@ your-project/
 cp -r /path/to/solid/.cursor ./
 ```
 
-On Unix, ensure the hook is executable:
-
-```bash
-chmod +x .cursor/hooks/solid-reminder.sh
-```
+This preset does not include a hook. Adding `hooks.json` later is optional and is not required for the rule, the skill, or the subagent to load.
 
 ## How to use
 
@@ -114,26 +134,9 @@ Audit this package at SOLID strict level and list missing ports at the domain bo
 Explain each SOLID principle you apply while refactoring this class (educational).
 ```
 
-## Hook behavior
-
-After every edit of a source file (`.ts`, `.tsx`, `.js`, `.py`, `.java`, …) the hook:
-
-1. Detects that the file is application source.
-2. Writes a SOLID reminder to `.cursor/logs/hooks/solid-YYYYMMDD.log`.
-3. If the project has ESLint, runs complexity / max-lines-per-function heuristics on the changed file.
-4. Never blocks the agent (fail-open).
-
-Complexity warnings are **heuristics**, not a SOLID verdict. Use `/solid-reviewer` for a real design assessment.
-
-To get the lint part, install ESLint in your project:
-
-```bash
-npm install --save-dev eslint
-```
-
 ## Stronger automation (recommended for real projects)
 
-This preset works great on its own, but for maximum reliability add automated tooling:
+This preset works great on its own, but for maximum reliability add automated tooling beside it:
 
 1. **ESLint** (`complexity`, `max-lines-per-function`, import boundaries)
 2. **Architecture tests** (e.g. dependency-cruiser, ArchUnit, custom layer tests)
@@ -143,14 +146,11 @@ These tools complement the Cursor preset — they catch structural regressions t
 
 ## What the agent knows by default
 
-- Prefer one reason to change per module (S) — including utils, validators, repos, and UI shells
-- Extend with strategies/composition instead of editing closed cores (O) — hunt **scattered** switches, not only the largest service; defs folders do not clear a closed factory
-- Subtypes must honor base contracts; prefer composition when inheritance would lie (L) — also follow call sites on pages/layouts/routes/workers; watch template-method skips, conditional identity on effectful bases, and sibling subtypes after one OK type
-- Prefer small role interfaces over fat ports (I)
-- Depend on abstractions; inject concrete adapters at the edge (D) — flag concrete↔concrete cycles, `new` in UI/API, and DIP theater (type-alias ports / fake Container)
-- Package/app audits must pass the `audit-coverage.md` gate (do not stop after one god class; sweep workers/BFF/bus/config when present; do not trust Strategy/Factory/Facade/Port names alone)
-- At pragmatic level: do not invent unused interfaces or layers; still escalate cross-layer concrete coupling
-- Functional mapping when `paradigm` is `functional`
+- Apply the enabled letters from `solid.config.json` at the resolved level and paradigm
+- Do not invent unused abstractions at `pragmatic`; do not skip enabled letters at `strict`
+- Map OOP ↔ functional using `references/principles-table.md` when `paradigm` is `functional`
+- Concrete smells and layer hunts live in `references/` — open them on review or package/app audit
+- Use `/solid-reviewer` for a readonly audit in a separate context; the parent applies fixes
 
 ## Source
 

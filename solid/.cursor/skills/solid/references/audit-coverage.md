@@ -1,7 +1,10 @@
 # SOLID Audit Coverage — Package / App Sweep
 
-Use this checklist on **package- or app-scoped** reviews (not a single 20-line diff).  
-Goal: stop “GodService-only” audits that miss the same smell repeated in utils, routes, hooks, pages, **and peripherals** (workers, BFF, bus, config).
+This file is the only copy of the layer sweep and the coverage gate. Add a layer or a hunt here, not in `SKILL.md`, the rule, or `solid-reviewer`.
+
+**When to load:** more than one file, or any package/app scope. Do not use this checklist for single-file scope — still review that file.
+
+Goal: stop “GodService-only” audits that miss the same smell repeated in utils, routes, hooks, pages, and peripherals (workers, BFF, bus, config).
 
 Load with `anti-patterns.md` and `principles-table.md`. Report every hit with `path:line` + principle letter.
 
@@ -62,7 +65,7 @@ Enumerate **every** closed extension point in scope (not just the largest servic
 - Feature-flag and geolocation tables hardcoded in one function.
 - `*-defs/` folders that do **not** replace a still-closed factory/router/`isOn`.
 
-At `pragmatic`, still **list** each magnet; severity may be Medium for tiny stable unions.
+At `pragmatic`, **notice** each magnet while sweeping. **File as OCP** only when the axis should grow without editing that core, or a closed twin sits beside an open registry/strategy. Tiny stable unions, frozen-spec adapters, and domain lifecycle enums → Needs verification or skip — **notice ≠ violation**. Tax/state branches inside a multi-concern handler → prefer **S** (see `anti-patterns.md`).
 
 ### L — Liskov Substitution
 

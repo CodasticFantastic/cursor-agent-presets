@@ -1,6 +1,8 @@
 # Code Patterns for SOLID
 
-Practical TypeScript patterns. Prefer the smallest structure that restores the principle.
+Implementation shapes. Add a shape here, not in `SKILL.md`, the rule, or `solid-reviewer`. Examples are TypeScript. Adapt the syntax to the file. `languages` in `solid.config.json` does not limit which files these shapes apply to, and a new language does not need a new file.
+
+Prefer the smallest structure that restores the enabled letter.
 
 ## S — Split reasons to change
 
@@ -61,7 +63,7 @@ function applyFee(policy: FeePolicy, amount: number) {
 }
 ```
 
-At `pragmatic` level, a small stable union with exhaustive `switch` is fine until variants churn.
+At `pragmatic` level, a small stable union with exhaustive `switch` is fine until variants churn. Noting it on a package audit is optional; it is not an automatic OCP violation.
 
 ## L — Honor the base contract
 

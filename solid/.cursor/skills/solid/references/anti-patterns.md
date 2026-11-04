@@ -1,6 +1,6 @@
 # SOLID Anti-Patterns
 
-Smells to flag in reviews. Pair with `principles-table.md`, `code-patterns.md`, and (for package audits) `audit-coverage.md`.
+Smell catalog. Add a smell here, not in `SKILL.md`, the rule, or `solid-reviewer`. Pair with `principles-table.md`, `code-patterns.md`, and (for package audits) `audit-coverage.md`. Apply a row only when its letter is enabled.
 
 ## S — Single Responsibility
 
@@ -23,7 +23,7 @@ Smells to flag in reviews. Pair with `principles-table.md`, `code-patterns.md`, 
 | Smell | Why it fails | Typical fix |
 |-------|--------------|-------------|
 | Type `switch` edited for every variant | Extension requires modifying closed core | Strategy / polymorphic handlers |
-| **Scattered closed switches** | Same OCP pain in tax countries, feature flags, geo IP ranges, payment factory, notification channels, coupon codes, API `action`, UI `mode`, DI **token**, **locale** — agent misses all but one | List **each** magnet with `path:line`; registry/map or strategies per family |
+| **Scattered closed switches** | Same OCP pain when a **product extension axis** (payment method, notification channel, coupon, plugin kind, feature family) grows by editing one core — agent often cites only the largest service | File each **true** OCP magnet with `path:line`; registry/map or strategies per family. Do **not** auto-file every tax/state/country `if` inside a god handler as O — prefer **S** there unless an open twin (strategy/registry) already exists beside the closed switch |
 | Feature flags piled inside one service | Same core absorbs every product branch | Separate policies or modules per flag family |
 | Base class grows “shared” email/HTML/audit methods | Every new payment method still edits the base | Composition of narrow collaborators |
 | Copy-paste variant classes with tiny diffs | Closed reuse missing; still edit many places | Shared composition + small strategies |
@@ -31,7 +31,7 @@ Smells to flag in reviews. Pair with `principles-table.md`, `code-patterns.md`, 
 | **`*-defs/` theater** | Def folders look like OCP; real factory/router/`isOn` remains a closed if-chain | Wire defs into a map/registry the core does not edit per variant |
 | **Locale / i18n table deciding tax or domain** | i18n churn forces tax edits (and vice versa) | Keep translation tables separate from policy tables |
 
-**Pragmatic exception:** a stable, exhaustive union with 2–3 cases and low churn is acceptable until a fourth variant appears — still **mention** it on package audits.
+**Pragmatic exception:** a stable, exhaustive union with 2–3 cases and low churn is acceptable until a fourth variant appears. On package audits you may **note** it under Needs verification / change-rate — **mention is not a violation**. File OCP only when the axis is meant to grow without editing that core, or a closed twin sits next to an already-open registry/strategy.
 
 ## L — Liskov Substitution
 
@@ -41,6 +41,7 @@ Smells to flag in reviews. Pair with `principles-table.md`, `code-patterns.md`, 
 | Empty override / no-op that the base documents as work | Silent contract break | Composition or narrower type |
 | **Conditional no-op subtype** | Override sometimes returns the input / early-exits with no effect while the base (or type name) promises real work — e.g. policy/validator/save/notify that is identity below a threshold | Narrow the base contract (“may be identity”), or don’t subtype — separate type / composition |
 | **Sibling blindness** | One honest non-subtype in a hierarchy file clears L; a neighboring concrete that `extends` the effectful base still breaks callers | After classifying one type, enumerate **every** concrete subtype of the same base in that module |
+| **Honest refusal vs broken postcondition** | Subtype that early-returns / refuses to enter without setting a broken state is not L when the base postcondition still holds; subtype that sets “done” flags with null/invalid results **is** L | Read the base JSDoc/contract; compare siblings before filing |
 | Subclass needing extra mandatory setup | Stronger precondition | Factory that returns a ready instance; or don’t subtype |
 | Narrowed return that drops base guarantees | Weaker postcondition | Preserve the contract or change the base type |
 | **Invariant-breaking setters** (Square/Rectangle) | Helpers written for the base get wrong results | Separate types; immutable dimensions; no subtype lie |
@@ -70,6 +71,7 @@ Smells to flag in reviews. Pair with `principles-table.md`, `code-patterns.md`, 
 | `new ConcreteX()` inside domain policy | High-level depends on low-level detail | Inject a port; construct adapter at composition root |
 | **Same concrete constructed in services + API + UI/hooks** | Every layer coupled to one vendor type | One composition root; edges receive ports |
 | Importing ORM/HTTP SDK in pure domain files | Same as above | Keep adapters at the edge |
+| **Subtype that breaks a purity / exception contract** | Interface or base JSDoc says pure, no I/O, or “reject only with `X`”; implementor `fetch`es or throws a different error | Primary letter is **L** (contract substitution). Do not also file **D** for the same symbol unless a separate DIP issue exists (wrong-owned port types, concrete cycle, policy `new` without being a subtype break) |
 | Service locator / global singleton as hidden DI | Opaque dependencies; hard to test | Explicit constructor/parameter injection |
 | Circular package imports across layers | Dependency arrow points the wrong way | Invert with a port owned by the inner layer |
 | **Concrete↔concrete cycles** (mailer↔payment↔db each `new` the others) | No stable inner policy; testing explodes | Ports owned by application layer; adapters depend inward only |
@@ -85,6 +87,11 @@ Do **not** treat these as Critical by default:
 - A private helper used by one module
 - Framework entrypoints that must construct the object graph (composition root)
 - Tiny scripts / one-off CLIs outside the product domain
+- A closed **domain lifecycle** / exhaustive status enum that changes the model when extended (not a product plug-in axis)
+- An **adapter for a frozen external spec** (EDI version table, protocol code map) — editing that adapter when the standard changes is expected, not an OCP failure
+- Tax / nexus / state `if`s **inside** a multi-concern HTTP or desk handler — file **S** (and D if the edge constructs infra); do not invent a second OCP finding for the same handler unless an open strategy/registry twin already exists
+- Second letter on the **same symbol** when the first letter already covers the break (e.g. L for a purity-contract subtype; do not also stamp D solely because the body uses `fetch`)
+- Sibling subtype that **refuses work** without violating the base postcondition (contrast with a sibling that leaves invariants broken)
 
 Escalate when there is evidence of churn, test pain, **cross-layer** coupling, or the **same** concrete appearing in three or more layers in the scoped files.
 
