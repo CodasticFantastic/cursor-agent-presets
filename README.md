@@ -27,8 +27,9 @@ Do **not** rename, move or flatten any folders — Cursor expects this precise s
 | [`security`](./security) | Source-level security (access, injection, secrets, exposure, SSRF, fail-open) with a rule, a skill, and a readonly review subagent | Application code |
 | [`tdd`](./tdd) | TDD planning and test-quality audit (cycle, behavior, focus, oracle, isolation, arrange); skill/reviewer plan or audit only — no file edits | Application / tests |
 | [`react`](./react) | React (Rules of Hooks, server/client boundary, derived state, list keys) with a rule, a skill, and a readonly review subagent | React UI |
+| [`nest`](./nest) | NestJS (thin controllers, boundary validation, dependency injection, HTTP errors at the edge) with a rule, a skill, and a readonly review subagent | NestJS API |
 
-> More presets will be added over time (Nest).
+The orchestrator, when it exists, routes `security` onto both the API and the UI. A React screen still gets `react` and `wcag-2.2`. A Nest route still gets `nest`. Security is not limited to the server.
 
 ## How to Use
 

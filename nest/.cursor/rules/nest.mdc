@@ -1,0 +1,22 @@
+---
+description: "NestJS — thin controllers, validation at the boundary, constructor injection, HTTP errors at the edge. Defaults come from .cursor/skills/nest/nest.config.json."
+globs: "**/*.{controller,service,module,guard,pipe,filter,interceptor,dto}.ts"
+alwaysApply: false
+---
+
+# Nest Rules
+
+When generating or modifying NestJS code, read `.cursor/skills/nest/nest.config.json` first. `level` is `pragmatic`, `strict`, or `educational`. `dimensions` is a list of `controller`, `validation`, `di`, `exceptions`. Shipped default: pragmatic, all four. A level or dimension set named in chat overrides the file for that request. If the file is missing or a value is invalid, use pragmatic and all four.
+
+Apply only dimensions in the resolved `dimensions` list. Skip the others. `pragmatic` files policy in controllers, `new` of providers, untyped bodies, and `HttpException` in services. `strict` applies every enabled dimension. `educational` names each enabled dimension. Full level behavior is in the `nest` skill. Once that skill is loaded, its filter wins.
+
+One reminder per dimension. Meaning, pass/fail, and severity live in `.cursor/skills/nest/references/principles-table.md`. The eight rule names live in `.cursor/skills/nest/references/nest-rules.md`. Do not restate those files here. Do not search the web for extra Nest rules. A file that is not Nest code is out of scope.
+
+- **controller** — Read HTTP input, call a provider, return. Do not query, send mail, or decide domain policy in the method. Do not take over the response for ordinary JSON.
+- **validation** — Body, query, and params are a DTO or schema checked by a pipe. The service does not re-check HTTP shape.
+- **di** — Inject collaborators. `new` of another provider belongs in `main.ts` or a module factory. Import the exporting module.
+- **exceptions** — Domain throws domain errors. A filter or the controller maps them to HTTP.
+
+Never write that a package or project is "fully Nest" or "Nest compliant". Do not file a missing owner check, a concatenated query, or a secret as Nest.
+
+Follow the `nest` skill for the workflow, the scope filter, the evidence rules, and the patterns. Smells: `.cursor/skills/nest/references/anti-patterns.md`. Shapes: `.cursor/skills/nest/references/code-patterns.md`. Package sweep: `.cursor/skills/nest/references/audit-coverage.md`. Add a new smell, layer, or shape in that reference, not in this rule. `/nest-reviewer` is a separate readonly audit and it returns notes to the parent. Start it when the user asks for an audit or a parent explicitly delegates a review. Do not start it on your own after generating or editing code.
