@@ -1,16 +1,16 @@
 ---
 name: security
-description: "Design, implement, and review code for security harm: broken access control, injection (including XSS), secrets and weak crypto, sensitive-data exposure, SSRF and open redirects, and controls that fail open. Defaults come from security.config.json (shipped as pragmatic). Use when writing or reviewing auth, queries, HTML output, logging, outbound requests, or when the user asks for security, OWASP, authz, IDOR, injection, XSS, secrets, SSRF, or fail-open."
+description: "Design, implement, and review code for security harm: broken access control, injection (including XSS), secrets and weak crypto, sensitive-data exposure, SSRF and open redirects, controls that fail open, and unsafe business rules (TOCTOU, client-trusted amounts). Defaults come from security.config.json (shipped as pragmatic). Use when writing or reviewing auth, queries, HTML output, logging, outbound requests, payouts/reserves, or when the user asks for security, OWASP, authz, IDOR, injection, XSS, secrets, SSRF, fail-open, or business-logic abuse."
 paths: "**/*.{ts,tsx,js,jsx,mjs,cjs,py,java,kt,cs,go,html,sql}"
 ---
 
-# Security — Access, Injection, Secrets, Exposure, Requests, Fail-open
+# Security — Access, Injection, Secrets, Exposure, Requests, Fail-open, Logic
 
 Use this skill whenever designing, implementing, refactoring, or reviewing code that can be abused.
 
-**Defaults come from `security.config.json` in this skill folder** (`level`: `pragmatic`, `strict`, or `educational`; `dimensions`: a list of `access`, `injection`, `secrets`, `exposure`, `request`, `failopen`). Read that file first on every run. The shipped file is pragmatic with all six dimensions.
+**Defaults come from `security.config.json` in this skill folder** (`level`: `pragmatic`, `strict`, or `educational`; `dimensions`: a list of `access`, `injection`, `secrets`, `exposure`, `request`, `failopen`, `logic`). Read that file first on every run. The shipped file is pragmatic with all seven dimensions.
 A level or dimension set stated in the chat overrides the file for that request. Do not ask when the file already has a valid combination.
-If the file is missing, a level is not one of the tokens above, a dimension id is outside the six above, or `dimensions` is empty, use pragmatic and all six dimensions.
+If the file is missing, a level is not one of the tokens above, a dimension id is outside the seven above, or `dimensions` is empty, use pragmatic and all seven dimensions.
 
 `languages` in that file is example syntax only. It does not select files and it does not turn a dimension on or off. Patterns in `references/code-patterns.md` are TypeScript. Adapt the syntax to the file you are editing. Adding a language does not need a new reference file.
 
@@ -18,9 +18,9 @@ If the file is missing, a level is not one of the tokens above, a dimension id i
 
 Level behavior has one copy: the table under "Level behavior". The rule file may name the three levels in one line so generation works before this skill is opened. It must not grow a second definition. Once this file is loaded, that table wins.
 
-The markdown references are the working catalogs. This file is the procedure. The closed risk list is `references/owasp-top-10.md` (OWASP Top 10:2025, ten rows). Load it on every run. Do not search the web for the ten and do not invent an eleventh item. If a catalog does not settle a case, use that dimension's question in `references/principles-table.md`, then the matching row in the Top 10 file. Do not invent a seventh dimension.
+The markdown references are the working catalogs. This file is the procedure. The closed risk list is `references/owasp-top-10.md` (OWASP Top 10:2025, ten rows). Load it on every run. Do not search the web for the ten and do not invent an eleventh item. If a catalog does not settle a case, use that dimension's question in `references/principles-table.md`, then the matching row in the Top 10 file. Do not invent an eighth dimension beyond the seven listed tokens.
 
-A finding is a behavior the source can abuse: a missing allow/deny, untrusted data in a sink, a secret in the repo or a log, sensitive data sent to the wrong party, a user-controlled outbound URL, or a check that allows on error. Security complements SOLID, KISS, coupling, structure, and WCAG. A missing port is SOLID **D**. A focus ring is WCAG. A train wreck is coupling. Do not file a dependency as vulnerable unless the source names the advisory. Do not write exploit steps.
+A finding is a behavior the source can abuse: a missing allow/deny, untrusted data in a sink, a secret in the repo or a log, sensitive data sent to the wrong party, a user-controlled outbound URL, a check that allows on error, or a money/inventory rule the caller can bend (client-trusted amount, missing sign check, check-then-act without an atomic guard). Security complements SOLID, KISS, coupling, structure, and WCAG. A missing port is SOLID **D**. A focus ring is WCAG. A train wreck is coupling. Do not file a dependency as vulnerable unless the source names the advisory. Do not write exploit steps.
 
 The parent agent implements fixes in its own context. `/security-reviewer` is a separate readonly audit: it returns the report below and does not edit. Do not start it after ordinary generation or editing. Start it when the user asks for an audit or a parent explicitly delegates one.
 
@@ -38,12 +38,13 @@ The parent agent implements fixes in its own context. `/security-reviewer` is a 
 
 Each bullet is one dimension. Skip it when that dimension is not enabled. The table is the definition. These lines are the generation reminder.
 
-- **access** — Every state-changing or private read checks the caller against the resource. Do not trust a client-supplied role, owner id, or "isAdmin" flag.
-- **injection** — Keep untrusted data out of SQL, shell, paths, HTML, and evaluators. Bind parameters. Encode on output. React text nodes are already encoded.
-- **secrets** — Load secrets from the environment or a secret store. Do not commit them, log them, or hash passwords with a fast hash.
-- **exposure** — Do not return stack traces, internal errors, or other people's sensitive fields. Do not ship secrets or session blobs to the client.
-- **request** — Do not fetch or redirect to a URL the caller chose unless it is on an allowlist you control.
-- **failopen** — If an auth, signature, or permission check errors, deny. Do not continue, return the protected data, or default to allow.
+- **access** — Every state-changing or private read checks the caller against the resource. Do not trust a client-supplied role, owner id, or "isAdmin" flag. Exact role match; cookie sessions need CSRF or SameSite; no session fixation.
+- **injection** — Keep untrusted data out of SQL, shell, paths, HTML, YAML/XML, headers, and evaluators. Bind parameters. Encode on output. React text nodes are already encoded.
+- **secrets** — Load secrets from the environment or a secret store. Do not commit them (including seed/`.pem`/`.env`), log them, ship them to the browser, or hash passwords with a fast hash.
+- **exposure** — Do not return stack traces, internal errors, or other people's sensitive fields. Do not publicly cache private responses or ship secrets/session blobs to the client.
+- **request** — Do not fetch or redirect to a URL the caller chose unless it is on an allowlist you control. Prefer allowlists over denylists; do not build reset links from `Host`.
+- **failopen** — If an auth, signature, scan, or permission check errors, deny. Do not continue, return the protected data, call `next()`, or default to allow.
+- **logic** — Money, inventory, and similar state changes enforce server-side rules atomically. Do not trust a client amount when the server owns the figure; reject illegal signs; do not check-then-act without a single guarded write.
 
 ## Level behavior
 
@@ -116,13 +117,14 @@ Dimension disambiguation (before filing):
 5. Stack traces, internal errors, or someone else's sensitive fields returned to a client → **exposure**. A password written to a log is **secrets**, not exposure.
 6. A caller-chosen URL that the server fetches or redirects to → **request**. A fixed URL in source is not request.
 7. An auth, signature, or permission check that continues or returns allow when it throws → **failopen**. A catch that logs and denies is not failopen.
-8. Do not stamp SOLID, KISS, coupling, structure, or WCAG onto a security sink. Untrusted HTML in an HTML sink is **injection**. A missing focus style is WCAG, not security.
+8. A client-trusted money/quantity amount, a missing sign/bounds check on that amount, or a read-check-then-write without an atomic predicate (TOCTOU) → **logic**. Missing allow/deny on the same handler is still **access** (file access for authz; logic only when the rule itself is unsafe).
+9. Do not stamp SOLID, KISS, coupling, structure, or WCAG onto a security sink. Untrusted HTML in an HTML sink is **injection**. A missing focus style is WCAG, not security.
 
 Put each finding into one class:
 
-- **Code** — the source alone shows a violation or a satisfied check. Examples: SQL built with string concatenation of request input; a handler that loads a row by id and never compares the owner; `innerHTML` assigned from a query parameter; a live-looking API key in source; `catch { return true }` around a permission check; `fetch(req.query.url)`.
+- **Code** — the source alone shows a violation or a satisfied check. Examples: SQL built with string concatenation of request input; a handler that loads a row by id and never compares the owner; `innerHTML` assigned from a query parameter; a live-looking API key in source; `catch { return true }` around a permission check; `fetch(req.query.url)`; `update` after a balance check with no `WHERE balance >= amount`.
 - **Hybrid** — the source shows a risk; confirmation needs the mount, the middleware, or another module. Examples: a handler with no check in this file that might sit behind a router guard; a log field that might be redacted by a logger wrapper; a redirect target that might be allowlisted in the caller.
-- **Manual** — needs a product or threat judgment. Examples: whether a route is intentionally public; whether a field is sensitive in this domain; whether a dependency advisory applies. Do not invent that advisory.
+- **Manual** — needs a product or threat judgment. Examples: whether a route is intentionally public; whether a field is sensitive in this domain; whether a dependency advisory applies; whether an amount field is intentionally free-form. Do not invent that advisory.
 
 ### Report format
 
@@ -141,7 +143,7 @@ Verdict: this is a security assessment, not a certification.
 
 ### Violations visible in code
 - Location: path:line
-- Dimension: access | injection | secrets | exposure | request | failopen — <name>
+- Dimension: access | injection | secrets | exposure | request | failopen | logic — <name>
 - OWASP: <A0x:2025 — name from owasp-top-10.md> | n/a
 - Class: code
 - Severity: Critical | High | Medium

@@ -19,12 +19,27 @@ app.post("/orders/:id/cancel", async (req, res) => {
 ```
 
 ```typescript
-// The client does not choose the role.
+// The client does not choose the role. Exact match — not includes/substring.
 const role = req.session.role;
 if (role !== "admin") {
   res.status(403).end();
   return;
 }
+```
+
+```typescript
+// After password login, mint a new session id (no fixation).
+const sessionId = crypto.randomBytes(32).toString("hex");
+res.setHeader(
+  "Set-Cookie",
+  `sid=${sessionId}; Path=/; HttpOnly; Secure; SameSite=Lax`,
+);
+```
+
+```typescript
+// On password change: update the hash, then revoke other sessions.
+await users.setPassword(userId, await hash(nextPassword, 12));
+await sessions.deleteMany({ userId });
 ```
 
 ## injection — Bind and encode
@@ -57,6 +72,19 @@ Disable external entities when the XML is untrusted. Pass user text as template 
 
 Do not assign request data to `innerHTML` or `dangerouslySetInnerHTML`. If a stored HTML subset is a real product requirement, sanitize that subset in one place and treat anything else as text.
 
+```typescript
+// Prefer JSON for untrusted input. If YAML is required, use the library's safe loader (js-yaml 3: safeLoad), not load.
+const doc = JSON.parse(text) as unknown;
+```
+
+```typescript
+const ORDER = { opened_at: "opened_at", number: "number" } as const;
+const orderBy = ORDER[sort as keyof typeof ORDER] ?? "opened_at";
+// orderBy is a fixed identifier — never splice the raw query string into SQL.
+```
+
+Serve untrusted uploads with a server-chosen `Content-Type` (or `application/octet-stream`). Escape CSV cells and neutralize leading `= + - @`.
+
 ## secrets — Environment, slow password hash
 
 ```typescript
@@ -72,6 +100,18 @@ const passwordHash = await hash(password, 12);
 
 Log a request id. Do not log `password`, `authorization`, `cookie`, or the raw token.
 
+```typescript
+import { timingSafeEqual } from "node:crypto";
+
+function apiKeyOk(presented: string, stored: string): boolean {
+  const a = Buffer.from(presented);
+  const b = Buffer.from(stored);
+  return a.length === b.length && timingSafeEqual(a, b);
+}
+```
+
+Do not compare secrets with `startsWith`. Do not fall back JWT secrets to `""`. Do not keep access tokens in `localStorage` when an HttpOnly session cookie exists.
+
 ## exposure — Stable errors, explicit fields
 
 ```typescript
@@ -83,6 +123,13 @@ return { id: user.id, displayName: user.displayName };
 ```
 
 Keep `err.stack` on the server log, not in the response body.
+
+```typescript
+res.setHeader("Cache-Control", "private, no-store");
+return { id: row.id, name: row.name };
+```
+
+Do not put PII in JWT claims. Do not `postMessage(token, "*")`. Prefer `frame-ancestors 'none'` / `X-Frame-Options: DENY` on authenticated routes.
 
 ## request — Allowlist before the call
 
@@ -104,7 +151,14 @@ export async function deliver(raw: string, body: string) {
 }
 ```
 
-Redirect only to a relative path you own, or to a host on that same kind of list. Leave TLS certificate verification at the platform default. Do not set `rejectUnauthorized: false`.
+```typescript
+function safeNext(next: string): string {
+  if (!next.startsWith("/") || next.startsWith("//")) return "/desk";
+  return next;
+}
+```
+
+Redirect only to a relative path you own (reject `//`), or to a host on that same kind of list. Prefer an allowlist over a short host denylist; if redirects are followed, re-check the host. Build reset/OAuth links from a configured public origin — not `req.headers.host`. Leave TLS certificate verification at the platform default. Do not set `rejectUnauthorized: false`.
 
 ## failopen — Deny when the check fails
 
@@ -119,4 +173,31 @@ async function requireAdmin(req: Request): Promise<void> {
 }
 ```
 
-Do not `return true` from that `catch`.
+Do not `return true` from that `catch`. Do not invent an admin principal when load fails. Do not call `next()` from a rate-limit or auth failure path. Reject missing signatures; when a signature is present, also reject stale timestamps / replayed event ids. Treat a down malware scanner as unclean, not clean.
+
+## logic — Server-owned amounts, atomic writes
+
+```typescript
+export async function reserveFunds(db: AccountDb, accountId: string, amountCents: number) {
+  if (amountCents <= 0) throw new Error("amount");
+  // One statement: check and use together (no TOCTOU window).
+  const updated = await db.account.updateMany({
+    where: { id: accountId, balanceCents: { gte: amountCents } },
+    data: { balanceCents: { decrement: amountCents } },
+  });
+  if (updated.count !== 1) throw new Error("insufficient");
+}
+```
+
+```typescript
+export async function postPayout(db: PayoutDb, claimId: string) {
+  const claim = await db.claim.findUnique({ where: { id: claimId } });
+  if (!claim) throw new Error("missing");
+  // Amount comes from the server row, not from the request body.
+  return db.payout.create({
+    data: { claimId, amountCents: claim.reserveCents, status: "sent" },
+  });
+}
+```
+
+Do not write `balanceCents: account.balanceCents - amount` after a separate read when two callers can interleave. Do not accept a negative adjustment unless the product explicitly allows it and caps the floor.

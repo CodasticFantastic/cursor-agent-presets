@@ -15,9 +15,9 @@ Load with `anti-patterns.md` and `principles-table.md`. Report every hit with `p
 3. **One guarded route is not a package pass.** A health check may be public while the order route is not — keep sweeping.
 4. **Same smell, many layers.** If string-built SQL or an unchecked id appears in services **and** routes **and** jobs, file **each** location (or one finding that lists every path:line).
 5. **Public routes are not automatic failures.** Health, ready, and login are in scope to **notice** and usually **not** to file. Notice ≠ violation.
-6. **Do not invent advisories.** A dependency name is not a CVE.
+6. **Do not invent advisories.** A dependency name is not a CVE. File a supply-chain hit only when the repo (or the user) names an advisory id, or when a script in tree runs an unpinned remote payload (`curl | sh`).
 7. **Do not write exploits.** The finding names the dimension and the closing control.
-8. **Do not import other presets' findings.** A missing port is not access. A focus ring is not injection. A train wreck is not failopen.
+8. **Do not import other presets' findings.** A missing port is not access. A focus ring is not injection. A train wreck is not failopen. Display-only math is not logic.
 
 ## Mandatory layer sweep
 
@@ -25,13 +25,13 @@ Walk **every** layer that exists in scope. Skip a row only if that folder is abs
 
 | Layer | Typical paths | What to hunt |
 |-------|---------------|--------------|
-| HTTP / API | `app/api/`, `routes/`, controllers | State change without an allow/deny; id taken from the URL and not compared to the session (access) |
-| Domain / services | `services/`, `domain/` | Queries or commands built from arguments that began as request input (injection); checks that return allow on error (failopen) |
-| Queries | `repositories/`, `db/`, `*.sql` | Statement text concatenated with values (injection) |
-| Clients | `web/`, browser code | Secret in a public env var; HTML built from input (secrets / injection) |
+| HTTP / API | `app/api/`, `routes/`, controllers | State change without an allow/deny; id taken from the URL and not compared to the session (access); cookie CSRF; header/tenant from the client |
+| Domain / services | `services/`, `domain/`, `auth/`, `identity/`, `ledger/`, `billing/` | Queries or commands built from arguments that began as request input (injection); checks that return allow on error (failopen); session mint/fix/logout; role helpers; money/inventory writes (logic) |
+| Queries | `repositories/`, `db/`, `*.sql`, `prisma/` | Statement text concatenated with values (injection); seeds with live passwords or fixed OTP (secrets) |
+| Clients | `web/`, browser code, `middleware.ts` | Secret in a public env var; HTML built from input; token in `localStorage`; framing/CSP headers (secrets / injection / exposure) |
 | Views | templates, email HTML | Unencoded interpolation of untrusted text into HTML (injection) |
-| Jobs / workers | `worker/`, `jobs/`, webhooks | Webhook URL or fetch target from stored user input (request); job that loads by id and skips the owner (access) |
-| Config | env samples, CORS setup, logger setup | Live secret in a sample that is not a placeholder; `origin: *` with credentials (secrets / access) |
+| Jobs / workers | `worker/`, `jobs/`, webhooks | Webhook URL or fetch target from stored user input (request); job that loads by id and skips the owner (access); signature missing or replayable (failopen) |
+| Config / supply | env samples, CORS, logger, `next.config.*`, `scripts/`, `docs/*advisory*`, `keys/`, committed `.env` | Live secret that is not a placeholder; `origin: *` with credentials; TLS off; `curl \| sh`; advisory id pinned to a vulnerable version; private `.pem` in tree |
 
 ## Dimension hunt lists (search the tree)
 
@@ -40,56 +40,84 @@ Use ripgrep / file reads. Record hits even when the file looks “peripheral”.
 ### access
 
 - Handlers that read `params.id` or `body.id` and call update/delete/get with no session comparison.
-- Assignments from `body.role`, `body.isAdmin`, `body.ownerId`, `body.tenantId`.
-- `origin: "*"` or `origin: true` next to `credentials: true`.
+- Assignments from `body.role`, `body.isAdmin`, `body.ownerId`, `body.tenantId`, or `x-tenant-id` used as the authorization tenant.
+- Role helpers that use `includes`, substring, or `join(" ").includes` instead of an exact match / `Set`.
+- `origin: "*"`, `origin: true`, or a callback that reflects any `Origin` next to `credentials: true`.
 - Cookie-authenticated state changes with no CSRF token and no same-site cookie. Do not file bearer-token APIs.
-- JWT decode or verify that trusts `alg` from the token, includes `none`, or does not check the signature.
+- Session cookie `Set-Cookie` without `HttpOnly` / `Secure` / `SameSite`.
+- Login that keeps a caller-supplied session id; logout that clears only the cookie; password/email change without revoke or re-auth.
+- JWT decode or verify that trusts `alg` from the token, includes `none`, omits `{ algorithms: [...] }` on asymmetric verify, or skips the signature.
 
 ### injection
 
-- Query text that interpolates a variable (`"… " +`, template string) and then runs.
-- `exec(`, `spawn(` with `shell: true`, `eval(`, `new Function`.
-- `innerHTML`, `dangerouslySetInnerHTML`, `document.write`.
-- `path.join` or `path.resolve` with a request field. File only when the result is not forced back under a root.
-- XML parsed with external entities or DTDs enabled; a template engine given a user string as the template; a zip or tar entry path joined under the extract directory without a root check.
+- Query text that interpolates a variable (`"… " +`, template string) and then runs — including ORDER BY “allowlists” that still splice the raw string.
+- `exec(`, `spawn(` with `shell: true`, `eval(`, `new Function`, dynamic `import(` of request data.
+- `innerHTML`, `dangerouslySetInnerHTML`, `document.write`; `message` handlers that skip `event.origin`.
+- `path.join` or `path.resolve` with a request field or `kid`. File only when the result is not forced back under a root.
+- XML with external entities or DTDs; `yaml.load` (not `safeLoad`) on user text; template engine given a user string as the template; zip/tar entry path without a root check.
+- LDAP filters; mail/HTTP headers built without stripping CR/LF; `new RegExp(` from query/body; `Content-Type` derived from upload filename (especially `.svg`); CSV cells that only escape quotes.
 
 ### secrets
 
 - Assignments that look like keys or connection strings (`apiKey = "`, `postgres://`, `BEGIN PRIVATE KEY`, `sk_live`).
+- Committed `.env` (not `.env.example`), `**/keys/*.pem`, and `seed` / fixture files with live-looking passwords or fixed OTP.
 - Log calls whose argument is `password`, `authorization`, `cookie`, or `token`.
 - `md5`, `sha1`, or plain comparison used on a password.
 - `NEXT_PUBLIC_` or `VITE_` holding a secret name (`SECRET`, `KEY`, `TOKEN`, `PASSWORD`).
+- `localStorage` / `sessionStorage` of access tokens; `Math.random` for session/reset/OTP; hard-coded crypto keys or zero IVs.
+- Secret compares via `startsWith` / prefix, or digest `===` without `timingSafeEqual`; JWT secret defaulting to `""`.
 
 At `pragmatic`, **notice** `example`, `changeme`, `test`, and empty values. **File** when the value looks live. Notice ≠ violation.
 
 ### exposure
 
 - Response bodies that include `stack`, `sqlMessage`, or a spread of a user or session row.
+- Debug gates that compare `NODE_ENV` to a token other than the platform’s real production value.
+- `Cache-Control: public` (or long shared caching) on authenticated or PII responses.
+- PII fields inside JWT payloads; `postMessage(..., "*")` with tokens.
+- `productionBrowserSourceMaps: true`; routes that return `process.env`.
+- CSP / `X-Frame-Options` / `frame-ancestors` applied only to a public path while the authenticated app has none; `unsafe-inline` + `unsafe-eval` on session pages.
 - Client code that renders another user's hidden fields because the API type includes them.
 
 ### request
 
-- `fetch(`, axios, or `got` whose URL argument is a field of `req`, `body`, `query`, or a stored webhook URL.
-- `redirect(` or `Location` whose target is a request field. A same-function allowlist clears it.
+- `fetch(`, axios, or `got` whose URL argument is a field of `req`, `body`, `query`, a token header (`jku` / `x5u`), or a stored webhook URL.
+- Host **blocklists** (few denied names) especially with `redirect: "follow"` — file unless a real allowlist and post-redirect check exist.
+- `redirect(` or `Location` whose target is a request field; helpers that only test `startsWith("/")` (protocol-relative). A same-function allowlist of fixed paths/hosts clears it.
+- Password-reset or OAuth links whose host comes from `Host` / `X-Forwarded-Host`.
 - `rejectUnauthorized: false` or any outbound client that disables TLS verification.
 
 ### failopen
 
-- `catch` blocks that `return true`, `return next()`, or return the protected object.
-- Signature or token checks whose missing branch still proceeds.
-- JWT verification whose `catch` still accepts the caller.
+- `catch` blocks that `return true`, `return next()`, invent an admin/`system` user, or return the protected object.
+- Signature or token checks whose missing branch still proceeds; valid signatures accepted forever with no timestamp/nonce.
+- Malware / scanner `catch` or “scanner down” branches that mark the upload clean.
+- JWT verification whose `catch` still accepts the caller; missing OTP or missing `exp` treated as success.
+- Rate-limit middleware that fails open to `next()`.
+
+### logic
+
+- Payout / charge / credit / reserve helpers that take `amountCents` (or similar) from the request and persist it as the ledger amount.
+- Adjustments that add a client amount with no `<= 0` (or policy) reject.
+- `findUnique` / read balance, compare in memory, then `update` with `balance - amount` and no `WHERE balance >= amount` (or version/lock).
+- Money-moving POSTs with no idempotency / unique event guard when the same body can create two rows.
+- File **access** separately when the same handler also skips ownership; do not collapse both into one vague “auth is weak”.
 
 ## Minimum coverage gate (package audit)
 
 Before finishing a package/app review, confirm you can answer **yes** or cite “absent in tree”:
 
 - [ ] State-changing routes checked for an allow/deny **or** explicit “no such routes”
+- [ ] Role / tenant helpers read (exact match vs substring; client `x-tenant-*`) **or** explicit “none”
+- [ ] Session cookie flags, login id mint, logout revoke, password/email change step-up **or** explicit “no cookie session”
 - [ ] Query and command string hunt **or** explicit “no concatenated statements”
-- [ ] HTML and `eval` sinks hunted **or** explicit “no such sinks”
-- [ ] Secret and log-line hunt run; placeholders not filed
-- [ ] Error responses checked for stack or raw errors **or** explicit “errors are codes”
-- [ ] Outbound URL and redirect hunt **or** explicit “no caller-chosen URL”
-- [ ] Fail-open `catch` hunt on auth or signature checks **or** explicit “none”
+- [ ] HTML, `eval` / `Function`, YAML/XML, upload Content-Type, CSV, RegExp sinks hunted **or** explicit “no such sinks”
+- [ ] Secret and log-line hunt run — including `.env`, `keys/`, `seed*`, and public env prefixes; placeholders not filed
+- [ ] Error responses checked for stack or raw errors; private responses checked for `Cache-Control: public` **or** explicit “errors are codes / no public cache on private data”
+- [ ] Outbound URL, redirect, `Host`-built links, and JWKS/`jku` hunt **or** explicit “no caller-chosen URL”
+- [ ] Fail-open `catch` hunt on auth, signature, scan, and rate-limit checks **or** explicit “none”
+- [ ] Money / inventory / quota writes checked for client-trusted amounts, sign bounds, and atomic update **or** explicit “no such flows”
+- [ ] Config / headers / scripts: CORS+credentials, TLS verify, CSP/frame denial on app routes, source maps, `scripts/*` remote install, repo-documented advisories **or** explicit “absent”
 - [ ] No invented CVE and no exploit steps in the report
 
 If any checkbox is unchecked without a written reason (“folder missing” / “searched, none”), the audit is incomplete — keep searching.

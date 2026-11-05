@@ -2,7 +2,7 @@
 
 Production-ready security preset for Cursor IDE.
 
-It helps apply source-level security controls using the level and dimensions in `security.config.json`. The shipped file is **pragmatic** with all six dimensions: `access`, `injection`, `secrets`, `exposure`, `request`, `failopen`.
+It helps apply source-level security controls using the level and dimensions in `security.config.json`. The shipped file is **pragmatic** with all seven dimensions: `access`, `injection`, `secrets`, `exposure`, `request`, `failopen`, `logic`.
 Change `level` to `strict` or `educational`, or narrow `dimensions`, in that file. A request in chat overrides the file for that turn.
 
 A review of these files is not a penetration test. The agent must not claim that a package is "secure" or "OWASP compliant", and it must not write exploit steps.
@@ -22,7 +22,7 @@ A review of these files is not a penetration test. The agent must not claim that
 Each catalog has one owner. A new smell, layer, or code shape goes in that file. It does not get pasted into the rule or the subagent.
 
 - `references/owasp-top-10.md` — the only copy of the OWASP Top 10:2025 list (ten rows) and which dimension each risk maps to. Loaded on every run. Do not search the web for the ten
-- `references/principles-table.md` — working source for the six dimensions: meaning, pass/fail, severity
+- `references/principles-table.md` — working source for the seven dimensions: meaning, pass/fail, severity
 - `references/code-patterns.md` — implementation shapes (TypeScript examples; adapt the syntax)
 - `references/anti-patterns.md` — smell catalog, including sinks that are not findings
 - `references/audit-coverage.md` — the only copy of the package/app layer sweep and coverage gate
@@ -33,7 +33,7 @@ Each catalog has one owner. A new smell, layer, or code shape goes in that file.
 {
   "level": "pragmatic",
   "languages": ["typescript", "javascript"],
-  "dimensions": ["access", "injection", "secrets", "exposure", "request", "failopen"]
+  "dimensions": ["access", "injection", "secrets", "exposure", "request", "failopen", "logic"]
 }
 ```
 
@@ -53,14 +53,15 @@ The agent reads `security.config.json` before it generates or reviews security-s
 
 | Id | Focus |
 |----|--------|
-| `access` | Broken access control — caller checked against the resource, not a client-supplied role |
-| `injection` | SQL, command, path, HTML/XSS, and eval sinks |
-| `secrets` | Secrets out of source and logs; slow password hashes |
-| `exposure` | No stack traces or other people's sensitive fields in responses |
-| `request` | SSRF and open redirects — allowlist before fetch or redirect |
-| `failopen` | A failed auth, signature, or permission check denies |
+| `access` | Broken access control — caller checked against the resource, not a client-supplied role; session cookie/CSRF/fixation and exact role checks |
+| `injection` | SQL, command, path, HTML/XSS, eval, unsafe YAML/XML, upload Content-Type, CSV formula sinks |
+| `secrets` | Secrets out of source, seed, logs, and the browser; slow password hashes; timing-safe compares |
+| `exposure` | No stack traces, PII leakage, public cache on private data, or prod source maps / env dumps |
+| `request` | SSRF and open redirects — allowlist before fetch or redirect; no Host-built reset links |
+| `failopen` | A failed auth, signature, scan, or rate-limit check denies |
+| `logic` | Unsafe business rules — client-trusted amounts, missing sign/bounds checks, TOCTOU on balance/stock |
 
-Outdated packages are not a finding unless the repo or the user names an advisory. Do not invent a CVE.
+Session, misconfiguration, and integrity smells map into `access` / `exposure` / `injection` / `failopen` / `request`. Money and inventory rule abuse is `logic`. Do not invent an eighth dimension id. Outdated packages are not a finding unless the repo or the user names an advisory. Do not invent a CVE.
 
 ## How the layers relate
 

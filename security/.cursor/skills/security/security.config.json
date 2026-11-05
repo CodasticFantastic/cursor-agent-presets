@@ -1,5 +1,5 @@
 {
   "level": "pragmatic",
   "languages": ["typescript", "javascript"],
-  "dimensions": ["access", "injection", "secrets", "exposure", "request", "failopen"]
+  "dimensions": ["access", "injection", "secrets", "exposure", "request", "failopen", "logic"]
 }

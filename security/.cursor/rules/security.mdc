@@ -1,23 +1,24 @@
 ---
-description: "Security — access control, injection, secrets, exposure, outbound requests, and fail-open checks. Defaults come from .cursor/skills/security/security.config.json."
+description: "Security — access control, injection, secrets, exposure, outbound requests, fail-open checks, and unsafe business rules. Defaults come from .cursor/skills/security/security.config.json."
 globs: "**/*.{ts,tsx,js,jsx,mjs,cjs,py,java,kt,cs,go,html,sql}"
 alwaysApply: false
 ---
 
 # Security Rules
 
-When generating or modifying application code, read `.cursor/skills/security/security.config.json` first. `level` is `pragmatic`, `strict`, or `educational`. `dimensions` is a list of `access`, `injection`, `secrets`, `exposure`, `request`, `failopen`. Shipped default: pragmatic, all six. A level or dimension set named in chat overrides the file for that request. If the file is missing or a value is invalid, use pragmatic and all six.
+When generating or modifying application code, read `.cursor/skills/security/security.config.json` first. `level` is `pragmatic`, `strict`, or `educational`. `dimensions` is a list of `access`, `injection`, `secrets`, `exposure`, `request`, `failopen`, `logic`. Shipped default: pragmatic, all seven. A level or dimension set named in chat overrides the file for that request. If the file is missing or a value is invalid, use pragmatic and all seven.
 
 Apply only dimensions in the resolved `dimensions` list. Skip the others. `pragmatic` files sinks and missing checks the source can abuse, and leaves public health routes and placeholders alone. `strict` applies every enabled dimension. `educational` names each enabled dimension. Full level behavior is in the `security` skill. Once that skill is loaded, its filter wins.
 
 One reminder per dimension. Meaning, pass/fail, and severity live in `.cursor/skills/security/references/principles-table.md`. The ten risk names live in `.cursor/skills/security/references/owasp-top-10.md`. Do not restate those files here. Do not search the web for the ten.
 
-- **access** — Check the caller against the resource. Do not trust a client-supplied role, owner id, or admin flag.
-- **injection** — Bind queries. Encode output. Do not concatenate untrusted data into SQL, shell, paths, HTML, or eval.
-- **secrets** — Secrets come from the environment or a secret store. Do not commit them, log them, or use a fast hash for passwords.
-- **exposure** — Do not return stack traces or other people's sensitive fields. Do not ship secrets to the client.
-- **request** — Fetch and redirect only to allowlisted URLs. Do not follow a caller-chosen URL.
-- **failopen** — A failed auth, signature, or permission check denies. It does not continue.
+- **access** — Check the caller against the resource. Do not trust a client-supplied role, owner id, or admin flag. Exact role match; cookie CSRF/SameSite; no session fixation.
+- **injection** — Bind queries. Encode output. Do not concatenate untrusted data into SQL, shell, paths, HTML, YAML/XML, or eval.
+- **secrets** — Secrets come from the environment or a secret store. Do not commit them (seed/`.pem`/`.env`), log them, ship them to the browser, or use a fast hash for passwords.
+- **exposure** — Do not return stack traces or other people's sensitive fields. Do not publicly cache private data or ship secrets to the client.
+- **request** — Fetch and redirect only to allowlisted URLs. Prefer allowlists over denylists; do not build reset links from `Host`.
+- **failopen** — A failed auth, signature, scan, or permission check denies. It does not continue or call `next()` as allow.
+- **logic** — Server-owned money/inventory rules. Do not trust a client amount; reject illegal signs; write balances atomically (no TOCTOU).
 
 Never write that a package or project is "secure" or "OWASP compliant". Do not write exploit steps. Do not file a missing port, a focus ring, or a train wreck as security.
 
