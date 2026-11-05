@@ -1,0 +1,43 @@
+---
+description: "TDD — red-green-refactor and test quality (cycle, behavior, focus, oracle, isolation, arrange). Concrete rules for writing tests. Defaults come from .cursor/skills/tdd/tdd.config.json. /tdd plans only; /tdd-reviewer audits only — neither edits files."
+globs: "**/*.{ts,tsx,js,jsx,mjs,cjs,py,java,kt,cs,go}"
+alwaysApply: false
+---
+
+# TDD Rules
+
+When generating or modifying application or test code, read `.cursor/skills/tdd/tdd.config.json` first. `level` is `pragmatic`, `strict`, or `educational`. `dimensions` is a list of `cycle`, `behavior`, `focus`, `oracle`, `isolation`, `arrange`. Shipped default: pragmatic, all six. A level or dimension set named in chat overrides the file for that request. If the file is missing or a value is invalid, use pragmatic and all six.
+
+Apply only dimensions in the resolved `dimensions` list. Skip the others. `pragmatic` files clear cycle breaks and test-quality sinks. `strict` applies every enabled dimension. `educational` names each enabled dimension. Full level behavior is in the `tdd` skill. Once that skill is loaded, its filter wins.
+
+Meaning, pass/fail, and severity live in `.cursor/skills/tdd/references/principles-table.md`. Do not restate that table here. This rule carries the **concrete principles for writing tests** that the parent applies when implementing. `/tdd` and `/tdd-reviewer` plan or audit only and must not edit files.
+
+## Dimension reminders
+
+- **cycle** — For new behavior: write a failing test first, then the smallest production change that passes it, then refactor without new requirements. Do not invent the full feature and rubber-stamp tests afterward.
+- **behavior** — Assert observable outcomes and public contracts (return value, thrown domain error, persisted public state, rendered output). Do not assert private helpers or internal call order as the primary oracle.
+- **focus** — One reason to fail per test (or a tightly related table for one rule). Do not pile auth, money, persistence, and HTML into one `it`.
+- **oracle** — Assert a concrete expected value or state delta. Do not use only `toBeDefined`, `toBeTruthy`, empty expects, tautologies, or `not.toThrow()` alone for domain logic.
+- **isolation** — Keep tests deterministic. Put seams at network, clock, and filesystem. Fresh arrange per case. No sleeps, no fixture bleed, no order dependence.
+- **arrange** — Keep Arrange-Act-Assert (or given/when/then) visible. The act belongs in the test body, not buried inside `beforeEach` or `setupAndRun`.
+
+## How to write tests (concrete)
+
+1. **Name the behavior, not the method plumbing.** Prefer `applies the low-band hull rate under 100_00` over `test hullPremium`.
+2. **Red before green.** If production code for a new rule does not exist yet, the first deliverable is a failing case. If you are mid-change and skipped red, stop and add the failing case before more production code.
+3. **Smallest green.** Pass the current red only. Park the next band, cache, or edge as a later failing case.
+4. **Refactor only while green.** Renames and extracts are fine. New requirements are new reds.
+5. **AAA in the body.** Arrange data and doubles; act with one clear call; assert the outcome. Share factories, not hidden acts.
+6. **Mock at boundaries.** Fake mailers, HTTP, clock, fs. Prefer real in-process units for domain logic. Do not reimplement the SUT inside a mock.
+7. **Public API first.** Prefer exported functions and façade methods. Spy on private methods only if there is no public seam — and treat that as a design smell to fix, not a testing strategy.
+8. **Table-drive one rule.** `it.each` is for the same oracle with many inputs, not for unrelated behaviors.
+9. **Deterministic time and I/O.** Inject clocks and gateways. Reset or recreate mutable state every case.
+10. **Delete obsolete tests** when behavior is removed. Do not keep greens that assert dead contracts.
+11. **Do not chase coverage %** as a goal. Chase failing cases that lock the requirement.
+12. **Ask `/tdd` for a plan** when the sequence is unclear. Follow the plan; do not expect `/tdd` or `/tdd-reviewer` to write the files.
+
+## Out of scope for this rule
+
+Never write that a package or project is "fully TDD" or "TDD compliant". Do not invent a second test framework for one package. Do not file a missing port, a train wreck, a focus ring, or a security sink as TDD.
+
+Follow the `tdd` skill for the workflow, the scope filter, the plan format, the evidence rules, and the patterns. Smells: `.cursor/skills/tdd/references/anti-patterns.md`. Shapes: `.cursor/skills/tdd/references/code-patterns.md`. Package sweep: `.cursor/skills/tdd/references/audit-coverage.md`. Add a new smell, layer, or shape in that reference, not in this rule. `/tdd-reviewer` is a separate readonly audit and it returns notes to the parent. Start it when the user asks for an audit or a parent explicitly delegates a review. Do not start it on your own after generating or editing code.

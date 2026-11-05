@@ -1,0 +1,5 @@
+{
+  "level": "pragmatic",
+  "languages": ["typescript", "javascript"],
+  "dimensions": ["cycle", "behavior", "focus", "oracle", "isolation", "arrange"]
+}
