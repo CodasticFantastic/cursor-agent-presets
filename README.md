@@ -28,8 +28,24 @@ Do **not** rename, move or flatten any folders — Cursor expects this precise s
 | [`tdd`](./tdd) | TDD planning and test-quality audit (cycle, behavior, focus, oracle, isolation, arrange); skill/reviewer plan or audit only — no file edits | Application / tests |
 | [`react`](./react) | React (Rules of Hooks, server/client boundary, derived state, list keys) with a rule, a skill, and a readonly review subagent | React UI |
 | [`nest`](./nest) | NestJS (thin controllers, boundary validation, dependency injection, HTTP errors at the edge) with a rule, a skill, and a readonly review subagent | NestJS API |
+| [`code-review`](./code-review) | Diff orchestrator. Chunks related changes together and routes them to the lane reviewers below | A review of a diff or branch |
 
-The orchestrator, when it exists, routes `security` onto both the API and the UI. A React screen still gets `react` and `wcag-2.2`. A Nest route still gets `nest`. Security is not limited to the server.
+[`code-review`](./code-review) does not replace the other presets. A full review expects these agents in the same `.cursor/`:
+
+| Lane | Agent |
+|------|--------|
+| `solid` | `/solid-reviewer` |
+| `kiss` | `/kiss-reviewer` |
+| `coupling` | `/coupling-reviewer` |
+| `structure` | `/structure-reviewer` |
+| `security` | `/security-reviewer` |
+| `tdd` | `/tdd-reviewer` |
+| `react` | `/react-reviewer` |
+| `wcag-2.2` | `/a11y-reviewer` |
+| `nest` | `/nest-reviewer` |
+| `thermos` | `thermo-nuclear-review-subagent` (plugin; skip the lane if it is not installed) |
+
+`security` is routed to UI and to API. A missing lane is skipped and named in the report. Details of the chunks and the merge live in the [code-review preset](./code-review).
 
 ## How to Use
 

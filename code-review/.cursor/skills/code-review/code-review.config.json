@@ -1,0 +1,8 @@
+{
+  "base": "HEAD",
+  "maxLinesPerChunk": 2000,
+  "reportLanguage": "en",
+  "priorReports": "",
+  "commands": [],
+  "lanes": ["solid", "kiss", "coupling", "structure", "security", "tdd", "react", "wcag-2.2", "nest", "thermos"]
+}

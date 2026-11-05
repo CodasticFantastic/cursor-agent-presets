@@ -1,0 +1,12 @@
+---
+description: "Code review orchestrator for a diff or branch. Routes files to installed lane presets. Use only when the user asks for a code review. Does not run after an ordinary edit."
+alwaysApply: false
+---
+
+# Code review
+
+When the user asks for a code review, a PR review, or a diff audit, follow the `code-review` skill. Read `.cursor/skills/code-review/code-review.config.json` first.
+
+Do not start `/code-reviewer` after an ordinary edit. The skill owns chunking, routing, and the merged report. Lane presets own their own rules. Do not restate those rules here.
+
+A chunk keeps related functions together. Do not cut only by line count. `security` applies to UI and to API. Write the review in `reportLanguage` from that config. A language named in chat overrides the file for that request. Run `commands` only when that list is non-empty. An empty `priorReports` skips the earlier report. A set directory uses only the latest numbered file for the exact branch slug. A missing Thermos plugin skips that lane and does not stop the review.
