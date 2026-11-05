@@ -1,0 +1,22 @@
+---
+description: "React — Rules of Hooks, server/client boundary, derived state, and list keys. Defaults come from .cursor/skills/react/react.config.json."
+globs: "**/*.{jsx,tsx}"
+alwaysApply: false
+---
+
+# React Rules
+
+When generating or modifying React code, read `.cursor/skills/react/react.config.json` first. `level` is `pragmatic`, `strict`, or `educational`. `dimensions` is a list of `hooks`, `boundary`, `state`, `key`. Shipped default: pragmatic, all four. A level or dimension set named in chat overrides the file for that request. If the file is missing or a value is invalid, use pragmatic and all four.
+
+Apply only dimensions in the resolved `dimensions` list. Skip the others. `pragmatic` files broken hook order, effects that mirror props, and index keys on lists that reorder. `strict` applies every enabled dimension. `educational` names each enabled dimension. Full level behavior is in the `react` skill. Once that skill is loaded, its filter wins.
+
+One reminder per dimension. Meaning, pass/fail, and severity live in `.cursor/skills/react/references/principles-table.md`. The eight rule names live in `.cursor/skills/react/references/react-rules.md`. Do not restate those files here. Do not search the web for extra React rules. Do not apply `boundary` in a client-only app.
+
+- **hooks** — Call hooks at the top level of a function component or a custom hook. Not from conditions, loops, or plain functions.
+- **boundary** — `"use client"` sits on the leaf that needs the client. Server Components do not call client hooks. Props that cross the boundary are serializable.
+- **state** — Compute during render. An effect subscribes to the outside world; it does not copy props into state.
+- **key** — A list key is a stable id among siblings. Not the index when the list can reorder, and not a random value.
+
+Never write that a package or project is "fully React" or "React compliant". Do not file a focus ring, untrusted HTML, or a missing port as React.
+
+Follow the `react` skill for the workflow, the scope filter, the evidence rules, and the patterns. Smells: `.cursor/skills/react/references/anti-patterns.md`. Shapes: `.cursor/skills/react/references/code-patterns.md`. Package sweep: `.cursor/skills/react/references/audit-coverage.md`. Add a new smell, layer, or shape in that reference, not in this rule. `/react-reviewer` is a separate readonly audit and it returns notes to the parent. Start it when the user asks for an audit or a parent explicitly delegates a review. Do not start it on your own after generating or editing code.

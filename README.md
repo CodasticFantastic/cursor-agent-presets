@@ -26,8 +26,9 @@ Do **not** rename, move or flatten any folders — Cursor expects this precise s
 | [`structure`](./structure) | SLAP and guarded DRY (search before invent; pragmatic / strict / educational) with a rule, a skill, and a readonly review subagent | Application code |
 | [`security`](./security) | Source-level security (access, injection, secrets, exposure, SSRF, fail-open) with a rule, a skill, and a readonly review subagent | Application code |
 | [`tdd`](./tdd) | TDD planning and test-quality audit (cycle, behavior, focus, oracle, isolation, arrange); skill/reviewer plan or audit only — no file edits | Application / tests |
+| [`react`](./react) | React (Rules of Hooks, server/client boundary, derived state, list keys) with a rule, a skill, and a readonly review subagent | React UI |
 
-> More presets will be added over time (React, Nest).
+> More presets will be added over time (Nest).
 
 ## How to Use
 
