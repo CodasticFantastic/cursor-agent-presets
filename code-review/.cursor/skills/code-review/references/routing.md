@@ -8,12 +8,12 @@ A lane runs only when it is listed in `code-review.config.json` and at least one
 
 | Changed path | Lanes |
 |--------------|--------|
-| `**/*.{tsx,jsx}` with component logic (handlers, hooks, data loading) | `react`, `wcag-2.2`, `security`, `solid`, `kiss`, `coupling`, `structure` |
-| `**/*.{tsx,jsx}` that is markup only (no handler, hook, or fetch) | `react`, `wcag-2.2`, `security` |
-| `**/*.{controller,service,module,guard,pipe,filter,interceptor,dto}.ts` | `nest`, `security`, `solid`, `kiss`, `coupling`, `structure` |
-| Other application source `**/*.{ts,js,mjs,cjs,py,java,kt,cs,go}` | `solid`, `kiss`, `coupling`, `structure`, `security` |
+| `**/*.{tsx,jsx}` with component logic (handlers, hooks, data loading) | `react`, `wcag-2.2`, `security`, `solid`, `kiss`, `coupling`, `structure`, `thermos` |
+| `**/*.{tsx,jsx}` that is markup only (no handler, hook, or fetch) | `react`, `wcag-2.2`, `security`, `thermos` |
+| `**/*.{controller,service,module,guard,pipe,filter,interceptor,dto}.ts` | `nest`, `security`, `solid`, `kiss`, `coupling`, `structure`, `thermos` |
+| Other application source `**/*.{ts,js,mjs,cjs,py,java,kt,cs,go}` | `solid`, `kiss`, `coupling`, `structure`, `security`, `thermos` |
 | Tests `**/*.{test,spec}.{ts,tsx,js,jsx}` and `**/__tests__/**` | `tdd` |
-| `**/*.{sql,prisma}` | `security` |
+| `**/*.{sql,prisma}` | `security`, `thermos` |
 | Markdown, lockfiles, snapshots, generated files, images | none |
 
 Markup versus logic is decided by reading the file, not by the folder name. A `.tsx` file that fetches or branches is logic.
@@ -33,6 +33,6 @@ The lane reviewer is the readonly agent shipped with that preset:
 | `nest` | `/nest-reviewer` | `nest` |
 | `thermos` | `thermo-nuclear-review-subagent` | the Thermos review skill |
 
-`thermos` is one pass per chunk, on that chunk's application source. Do not also start `thermo-nuclear-code-quality-review-subagent` for the same files. If the Thermos agent is not available, skip the lane and name it. Do not stop the review, and do not require a ticket tracker or a wiki.
+`thermos` runs once per chunk when any file in that chunk matches a row that lists it. Give that one pass every such file. Several matching rows are still one pass. Do not also start `thermo-nuclear-code-quality-review-subagent`. If the Thermos agent is not available, skip the lane and name it. Do not stop the review, and do not require a ticket tracker or a wiki.
 
-Start a lane agent only for the files in that chunk that match its row. Do not give it the rest of the diff. `thermos` receives the chunk, not a second copy of the other lanes' prompts.
+Start a lane agent only for the files in that chunk that match its row. Do not give it the rest of the diff, and do not paste another lane's prompt into the Thermos pass.

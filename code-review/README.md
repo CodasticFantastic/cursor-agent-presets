@@ -35,13 +35,13 @@ A function stays with its callers, callees, tests, and twins so DRY, SOLID, and 
 
 `HEAD` means the working tree and the index against `HEAD`. Name another base in chat when the review is a branch.
 
-`reportLanguage` is a BCP 47 tag. The shipped value is `en`. Set it to `pl` when the review should come back in Polish. A language named in chat overrides the file for that run. The merged report and each lane report use that language. Severity tokens, lane ids, and `path:line` stay as tokens.
+`reportLanguage` is a BCP 47 tag. The shipped value is `en`. Set it to `pl` when the review should come back in Polish. A language named in chat overrides the file for that run. The whole merged report is in that language: title, headings, verdicts, and every sentence. `en` and `pl` use the fixed strings in `SKILL.md`. Any other tag translates the English strings. Severity tokens, rule labels, lane ids, and `path:line` stay as tokens.
 
 `priorReports` is a directory of earlier reviews for this repo, or `""`. Empty skips the step. When it is set, the review opens only `priorReports/<branch-slug>/`, where `/` in the branch name is `-`. A longer directory name is a different branch. From that directory it reads the single file with the highest leading number. Items marked `- [x]` or `✅` are checked against the current code. A sentence that says "fixed" is not evidence.
 
 `commands` is empty until the project fills it, for example `["pnpm type-check"]`. Empty means those tools are not run and the report must not say they passed. Each command runs once from the repo root.
 
-`thermos` is one pass per chunk (`thermo-nuclear-review-subagent`) when that agent is available. A missing plugin skips the lane. It does not block the rest of the review. The code-quality Thermos agent is not run on the same chunk.
+`thermos` is one `thermo-nuclear-review-subagent` pass per chunk that contains a file routed to it in `references/routing.md`. Tests, markdown, lockfiles, snapshots, generated files, and images do not start it. A missing plugin skips the lane. It does not block the rest of the review. The code-quality Thermos agent is not run on the same chunk.
 
 ## Lane agents this review expects
 
@@ -83,4 +83,4 @@ Or ask for a review of a branch or a diff. The reviewer returns one report. The 
 
 ## What the report is
 
-A review of the chunks that ran. It is not a certification. A chunk that was not reviewed stays `incomplete`.
+The merged report uses one shape: header, summary, checklist, numbered findings, and what held. Every heading and sentence follows `reportLanguage`. Each finding names the lane that caught it (`WCAG 2.2 AA`, `KISS`, `DRY`, and the other labels in `references/merge.md`). It is a review of the chunks that ran, not a certification. A chunk that was not reviewed is named in the summary.

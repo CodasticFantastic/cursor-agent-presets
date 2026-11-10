@@ -11,7 +11,7 @@ This skill does not define a design rule. Lane skills do. This file is the proce
 
 **Defaults come from `code-review.config.json` in this skill folder** (`base`, `maxLinesPerChunk`, `reportLanguage`, `priorReports`, `commands`, `lanes`). Read that file first. A base, a line ceiling, a report language, a prior-report directory, a command list, or a lane list stated in the chat overrides the file for that request.
 If the file is missing, `base` is `HEAD`, `maxLinesPerChunk` is 2000, `reportLanguage` is `en`, `priorReports` is empty, `commands` is empty, and `lanes` is the ten names in the shipped file. Drop a lane name that is not one of those ten.
-`reportLanguage` is a BCP 47 tag (`en`, `pl`, `de`). The merged report and every lane report are written in that language. Severity tokens (`Critical`, `High`, `Medium`), lane ids, family ids, and `path:line` stay as tokens.
+`reportLanguage` is a BCP 47 tag (`en`, `pl`, `de`). The published report is entirely in that language: headings, field names, verdicts, checklist titles, and every sentence. Severity tokens (`CRITICAL`, `HIGH`, `MEDIUM`), rule labels, lane ids, family ids, and `path:line` stay as tokens. A lane report in another language is rewritten into `reportLanguage` during the merge.
 `priorReports` is a directory, or empty. Empty means there is no previous report to check.
 `commands` is a list of shell commands, or empty. Empty means no lint, typecheck, or test is run, and the report must not say those checks passed.
 
@@ -32,7 +32,7 @@ The parent applies fixes. This procedure returns a report and does not edit prod
 6. **Review** — For each chunk and each assigned lane, run that lane's reviewer on only the matching files. The reviewer follows its own skill. Tell it to write its report in `reportLanguage`. Pass sibling paths when a set was split. Do not paste this procedure into the lane prompt. Thermos is one pass on that chunk, not two.
 7. **Commands** — If `commands` is empty, do not run a linter, typecheck, or test, and do not write that they passed. If it has entries, run each command once from the repo root and record the exit code.
 8. **Merge** — Combine the lane reports with `references/merge.md`, including the synthesis pass. One primary family per symbol.
-9. **Report** — Use the format below. Write the prose in `reportLanguage`. Do not claim the branch is clean, secure, or compliant.
+9. **Report** — Use the format below. Write the whole report in `reportLanguage`. Do not claim the branch is clean, secure, or compliant.
 
 ## Where a change goes
 
@@ -53,38 +53,86 @@ The parent applies fixes. This procedure returns a report and does not edit prod
 
 ## Report format
 
+This is the only copy of the report. Do not name a product, a ticket host, or a documentation site. Path abbreviations are allowed only for a prefix that actually repeats in this diff.
+
+The whole report is in `reportLanguage`. That includes the title, every heading, every field name, the three verdicts, the line for an empty section, the summary, chunk notes, finding titles, problems, and solutions. Do not leave a heading or a sentence in another language. Do not mix languages inside one report.
+
+These stay as written in every language: `CRITICAL`, `HIGH`, `MEDIUM`, the rule label from `references/merge.md`, `HEAD`, lane ids, branch names, SHAs, commands, and `path:line`. Map a lane's Critical to `CRITICAL` and High to `HIGH`.
+
+`en` and `pl` use the fixed strings below. For any other tag, translate the `en` column into that language and do not reuse the `pl` column.
+
+| Role | `en` | `pl` |
+|------|------|------|
+| Title | Code Review | Przegląd kodu |
+| Date | Date | Data |
+| Run | Run | Przebieg |
+| Mode | Mode | Tryb |
+| Files | Files | Pliki |
+| Validation | Validation | Walidacja |
+| Previous review | Previous review | Poprzedni przegląd |
+| No previous review | none | brak |
+| Path abbreviations | Path abbreviations | Skróty ścieżek |
+| Summary | Summary | Podsumowanie |
+| Verdict | Verdict | Werdykt |
+| Ready | Ready to merge | Gotowe do merge |
+| After fixes | Merge after fixes | Merge po poprawkach |
+| Needs fixes | Needs fixes | Wymaga poprawek |
+| Checklist | Fix checklist | Checklista poprawek |
+| Findings | Code notes | Uwagi do kodu |
+| Location | Location | Lokalizacja |
+| Severity label | Severity | Ważność |
+| Rule field | Rule | Reguła |
+| Problem | Problem | Problem |
+| Solution | Solution | Rozwiązanie |
+| What held | What went well | Co zrobiono dobrze |
+| Empty section | None. | Brak. |
+
+The rule value comes from `references/merge.md`. One primary label. A second label only when that file says the other lane also counts. The field name is the Rule field row. The value stays the token (`KISS`, `DRY`, `WCAG 2.2 AA`).
+
+Use this order. The words in the skeleton are the `en` column. Substitute the `pl` column when the tag is `pl`, or the translation of the `en` column for any other tag. Prose in angle brackets is written in `reportLanguage`.
+
 ```
-## Review result
-Language: <reportLanguage>
-Scope: <base and range>
-Chunks: <count, and which sets were split>
-Lanes run: <names>
-Lanes skipped: <names and why>
-Verdict: this is a review of the chunks that ran, not a certification.
+# <Title> — `<branch>` → `<base>`
 
-### Coverage
-- Chunks swept: <ids or folders>
-- Synthesis: <pairs checked across chunks, or “none — sets were not split”>
-- Gate: pass | incomplete — <chunk not run, or sibling paths not searched>
+**<Date>:** <YYYY-MM-DD HH:mm>
+**HEAD:** `<sha>` (<YYYY-MM-DD HH:mm>)
+**<Run>:** <NN, next number after the prior report, or 01>
+**<Mode>:** <which lanes ran, which were skipped>
+**<Files>:** <count, insertions, deletions, what was left out of chunks>
+**<Validation>:** <each command and its exit code, or that commands was empty and nothing was run>
+**<Previous review>:** <path of the one prior file, or the No previous review line>
 
-### Commands
-- <command and exit code> | not run — commands is empty
+<Path abbreviations line, or omit>
 
-### Prior reports
-- <path verified in code> | none — priorReports is empty
+<which chunks ran, which related set was split, sibling paths>
 
-### Findings
-- Location: path:line
-- Lane: <preset>
-- Family: <that preset's dimension or principle>
-- Severity: Critical | High | Medium
-- Why:
-- Fix:
+## <Summary>
 
-### Needs verification
-- Lane:
-- Location:
-- What is missing:
+**<Verdict>:** `<Ready>` | `<After fixes>` | `<Needs fixes>`
+
+<what the review covered, the heaviest user-facing breaks, and that this is not a certification. An incomplete chunk or an unsettled pair is named here.>
+
+### <Checklist>
+
+- [ ] **HIGH** — #1 <short title> (`path:line`)
+- [ ] **MEDIUM** — #2 <short title> (`path:line`)
+
+## <Findings>
+
+### 1. <short title>
+
+- **<Location>:** `path:line`
+- **<Severity label>:** HIGH
+- **<Rule field>:** <label from merge.md>
+- **<Problem>:** <what fails>
+
+> **<Solution>:** <the change that closes it>
+
+## <What held>
+
+- <satisfied checks that matter, each with path:line>
 ```
 
-If a section has no items, write "None in this scope." A finding without `path:line` stays under "Needs verification". An incomplete gate means say what was not reviewed. Do not close the report on the first chunk.
+A new review leaves every checklist box unchecked. Do not mark `[x]` unless this run verified the current code already has the fix.
+
+If a section has no items, write the Empty section line in `reportLanguage`. A finding without `path:line` stays out of this report. Do not close the report on the first chunk. Do not add a section that names agents, models, or this skill.

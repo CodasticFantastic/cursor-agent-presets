@@ -35,7 +35,28 @@ After every chunk has a lane report, do one pass. Do not start the lanes again.
 
 - A symbol defined or changed in chunk A and called or copied in chunk B is one finding if either side shows the break. Name both paths.
 - Sibling paths written on a split set count as chunk B even when their bodies were not loaded. Search those paths. Do not read the whole diff.
-- If the two sides disagree and the source does not settle it, put the pair under "Needs verification". Do not drop it.
+- If the two sides disagree and the source does not settle it, name the pair in the summary. Do not drop it and do not open a separate section for it.
+
+## Rule field
+
+The finding has one rule field. Its name is the Rule field row in `SKILL.md` (`Rule` in `en`, `Reguła` in `pl`, the translation of `Rule` for any other tag). The value is the label below for the primary family. Keep a second label only when the table above says the other lane also counts. Join them with ` + `.
+
+| Primary | Label |
+|---------|--------|
+| `wcag-2.2` | `WCAG <standard> <level>` and, when the lane cited a criterion, ` (<number>)` |
+| `kiss` | `KISS` |
+| `structure` and family dry | `DRY` |
+| `structure` and family slap | `SLAP` |
+| `solid` | `SOLID` and, when the lane cited a letter, ` <letter>` |
+| `react` | `React` |
+| `nest` | `Nest` |
+| `security` | `Security` and, when the lane cited an OWASP id, ` (<id>)` |
+| `coupling` and family lod | `Law of Demeter` |
+| `coupling` and family tda | `Tell, Don't Ask` |
+| `tdd` | `TDD` |
+| `thermos` | `Thermos` |
+
+The title, problem, and solution of the finding are in `reportLanguage`, as is the rest of the merged report. `Law of Demeter`, `Tell, Don't Ask`, `WCAG`, `KISS`, `DRY`, `SLAP`, `SOLID`, `React`, `Nest`, `Security`, `TDD`, and `Thermos` stay as written here in every language. Rewrite a lane sentence that arrived in another language.
 
 ## What the merged report does not say
 

@@ -19,4 +19,4 @@ When invoked:
 4. If `priorReports` is a directory, open only the latest numbered report for the current branch slug, as `SKILL.md` describes. Verify items marked `- [x]` or `✅` against the current code. An empty `priorReports` skips this step.
 5. If `commands` has entries, run each once from the repo root and record the exit code. An empty list means you do not run them and you do not say they passed.
 6. Merge with `references/merge.md`, including the synthesis pass.
-7. Return the report format from `SKILL.md`. Say when the gate is incomplete.
+7. Return the report format from `SKILL.md`, entirely in `reportLanguage`. Translate every heading, verdict, and sentence. Do not leave another language in the merged report. Say when the gate is incomplete.
